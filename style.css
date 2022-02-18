@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: hsla(0, 0%, 10%, 1);
+    color: hsla(0, 0%, 90%, 1);
+    font-family: "Fira Code";
+    font-size: 14px;
+    margin: 0;
+    width: 100vw;
+}
+
+.upload {
+    width: 500px;
+    height: 200px;
+    border: 2px solid black;
+}
+
+.samples {
+    margin: 20px;
+    padding: 20px;
+}
+
+.sample {
+    column-gap: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.sample span {
+    width: 20px;
+}
+
+.playing {
+    color: hsla(0, 0%, 10%, 1);
+}
+
+.active {
+    color: hsla(0, 0%, 90%, 1);
+}
