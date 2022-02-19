@@ -11,16 +11,17 @@ gainNode = audioCtx.createGain();
 gainNode.connect(audioCtx.destination);
 
 async function loadSamples() {
-    for (const s of samples) {
-        await fetch(`./assets/samples/${s}`)
-            .then((res) => {
-                res.arrayBuffer()
-                    .then(aBuf => audioCtx.decodeAudioData(aBuf))
-                    .then((buf) => {
-                        buffers.push(buf);
-                    });
-            });
-    }
+    const urls = samples.map(_ => `./assets/samples/${_}`);
+    const res = await Promise.all(urls.map(_ => fetch(_)));
+    const aBufs = await Promise.all(res.map(_ => _.arrayBuffer()));
+    buffers = await Promise.all(aBufs.map((_, i) => {
+        log(`${samples[i]} loaded`);
+        return audioCtx.decodeAudioData(_);
+    }));
+}
+
+function log(msg) {
+    document.querySelector('.log').innerText += `${msg}\n`;
 }
 
 function play(buf, gain) {
@@ -37,6 +38,7 @@ function onMidiMessage(event) {
         const sampleNum = event.data[1] - 60;
         if (event.data[0] >> 4 === 9) {
             // TODO: make gain logarithmic
+            document.querySelectorAll('.sample .playing')[sampleNum].classList.add('active');
             play(buffers[sampleNum], event.data[2] / 127);
         } else if (event.data[0] >> 4 === 8) {
         }

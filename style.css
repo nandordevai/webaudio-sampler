@@ -11,12 +11,6 @@ body {
     width: 100vw;
 }
 
-.upload {
-    width: 500px;
-    height: 200px;
-    border: 2px solid black;
-}
-
 .samples {
     margin: 20px;
     padding: 20px;
@@ -38,4 +32,11 @@ body {
 
 .active {
     color: hsla(0, 0%, 90%, 1);
+}
+
+.log {
+    height: 300px;
+    overflow: scroll;
+    white-space: pre;
+    width: 100%;
 }
