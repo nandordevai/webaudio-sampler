@@ -1,7 +1,5 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
-const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-const audioCtx = new window.AudioContext();
 let buffers = [];
 const samples = [
     'Kick.wav',
@@ -9,8 +7,20 @@ const samples = [
     'Closedhat.wav',
     'Clap.wav',
 ];
-gainNode = audioCtx.createGain();
-gainNode.connect(audioCtx.destination);
+
+const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const audioCtx = new window.AudioContext();
+const out = audioCtx.destination;
+const gainNode = audioCtx.createGain();
+const delayNode = audioCtx.createDelay(5.0);
+const delayFeedbackNode = audioCtx.createGain();
+delayFeedbackNode.gain.value = .1;
+delayNode.connect(delayFeedbackNode);
+delayFeedbackNode.connect(delayNode);
+gainNode.connect(delayNode);
+gainNode.connect(out);
+delayNode.connect(out);
+delayNode.delayTime.value = .25;
 
 async function loadSamples() {
     const urls = samples.map(_ => `./assets/samples/${_}`);
@@ -24,16 +34,23 @@ async function loadSamples() {
 }
 
 function addToList(i) {
+    // FIXME: handle more than 8 samples
     const el = document.createElement('div');
     el.classList.add('sample');
     el.innerHTML = `
-        <span class="playing">*</span><span class="channel">1</span><span class="octave">3</span><span class="note">${notes[i]}</span><span class="file">${samples[i]}</span>
+        <span class="playing">*</span>
+        <span class="channel">1</span>
+        <span class="octave">3</span>
+        <span class="note">${notes[i]}</span>
+        <span class="file">${samples[i]}</span>
     `;
     document.querySelector('.samples').appendChild(el);
 }
 
 function log(msg) {
-    document.querySelector('.log').innerText += `${msg}\n`;
+    const el = document.querySelector('.log');
+    el.innerText += `${msg}\n`;
+    el.scrollTop = el.scrollHeight;
 }
 
 function play(bufNum, gain) {
@@ -43,6 +60,7 @@ function play(bufNum, gain) {
     bufSrc.connect(gainNode);
     gainNode.gain.setValueAtTime(gain, audioCtx.currentTime);
     bufSrc.start(0);
+    log(`started ${bufNum}`);
     document.querySelectorAll('.sample .playing')[bufNum].classList.add('active');
     bufSrc.addEventListener('ended', (_event) => {
         document.querySelectorAll('.sample .playing')[bufNum].classList.remove('active');
