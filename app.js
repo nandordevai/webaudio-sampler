@@ -1,3 +1,5 @@
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+
 const audioCtx = new window.AudioContext();
 let buffers = [];
 const samples = [
@@ -5,6 +7,8 @@ const samples = [
     'Snare.wav',
     'Closedhat.wav',
 ];
+gainNode = audioCtx.createGain();
+gainNode.connect(audioCtx.destination);
 
 async function loadSamples() {
     for (const s of samples) {
@@ -19,10 +23,11 @@ async function loadSamples() {
     }
 }
 
-function play(buf) {
+function play(buf, gain) {
     const bufSrc = audioCtx.createBufferSource();
     bufSrc.buffer = buf;
-    bufSrc.connect(audioCtx.destination);
+    bufSrc.connect(gainNode);
+    gainNode.gain.setValueAtTime(gain, audioCtx.currentTime);
     bufSrc.start(0);
 }
 
@@ -31,7 +36,8 @@ function onMidiMessage(event) {
     if (channel === 1) {
         const sampleNum = event.data[1] - 60;
         if (event.data[0] >> 4 === 9) {
-            play(buffers[sampleNum]);
+            // TODO: make gain logarithmic
+            play(buffers[sampleNum], event.data[2] / 127);
         } else if (event.data[0] >> 4 === 8) {
         }
     }
