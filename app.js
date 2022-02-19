@@ -6,6 +6,7 @@ const samples = [
     'Kick.wav',
     'Snare.wav',
     'Closedhat.wav',
+    'Clap.wav',
 ];
 gainNode = audioCtx.createGain();
 gainNode.connect(audioCtx.destination);
@@ -24,12 +25,17 @@ function log(msg) {
     document.querySelector('.log').innerText += `${msg}\n`;
 }
 
-function play(buf, gain) {
+function play(bufNum, gain) {
+    const buf = buffers[bufNum];
     const bufSrc = audioCtx.createBufferSource();
     bufSrc.buffer = buf;
     bufSrc.connect(gainNode);
     gainNode.gain.setValueAtTime(gain, audioCtx.currentTime);
     bufSrc.start(0);
+    document.querySelectorAll('.sample .playing')[bufNum].classList.add('active');
+    bufSrc.addEventListener('ended', (_event) => {
+        document.querySelectorAll('.sample .playing')[bufNum].classList.remove('active');
+    });
 }
 
 function onMidiMessage(event) {
@@ -38,8 +44,7 @@ function onMidiMessage(event) {
         const sampleNum = event.data[1] - 60;
         if (event.data[0] >> 4 === 9) {
             // TODO: make gain logarithmic
-            document.querySelectorAll('.sample .playing')[sampleNum].classList.add('active');
-            play(buffers[sampleNum], event.data[2] / 127);
+            play(sampleNum, event.data[2] / 127);
         } else if (event.data[0] >> 4 === 8) {
         }
     }
