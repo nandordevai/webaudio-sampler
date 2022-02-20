@@ -8,7 +8,7 @@ const samples = [
     'Clap.wav',
 ];
 
-const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const audioCtx = new window.AudioContext();
 const out = audioCtx.destination;
 const gainNode = audioCtx.createGain();
@@ -20,7 +20,22 @@ delayFeedbackNode.connect(delayNode);
 gainNode.connect(delayNode);
 gainNode.connect(out);
 delayNode.connect(out);
-delayNode.delayTime.value = .25;
+delayNode.delayTime.value = .125;
+noteGenerator = notes();
+
+function addToList(i) {
+    const el = document.createElement('div');
+    el.classList.add('sample');
+    const [octave, note] = noteGenerator.next().value;
+    el.innerHTML = `
+        <span class="sample__bang">*</span>
+        <span class="sample__channel">1</span>
+        <span class="sample__octave">${octave}</span>
+        <span class="sample__note">${note}</span>
+        <span class="sample__file">${samples[i]}</span>
+    `;
+    document.querySelector('.samples').appendChild(el);
+}
 
 async function loadSamples() {
     const urls = samples.map(_ => `./assets/samples/${_}`);
@@ -33,38 +48,21 @@ async function loadSamples() {
     }));
 }
 
-function addToList(i) {
-    // FIXME: handle more than 8 samples
-    const el = document.createElement('div');
-    el.classList.add('sample');
-    el.innerHTML = `
-        <span class="playing">*</span>
-        <span class="channel">1</span>
-        <span class="octave">3</span>
-        <span class="note">${notes[i]}</span>
-        <span class="file">${samples[i]}</span>
-    `;
-    document.querySelector('.samples').appendChild(el);
-}
-
 function log(msg) {
     const el = document.querySelector('.log');
     el.innerText += `${msg}\n`;
     el.scrollTop = el.scrollHeight;
 }
 
-function play(bufNum, gain) {
-    const buf = buffers[bufNum];
-    const bufSrc = audioCtx.createBufferSource();
-    bufSrc.buffer = buf;
-    bufSrc.connect(gainNode);
-    gainNode.gain.setValueAtTime(gain, audioCtx.currentTime);
-    bufSrc.start(0);
-    log(`started ${bufNum}`);
-    document.querySelectorAll('.sample .playing')[bufNum].classList.add('active');
-    bufSrc.addEventListener('ended', (_event) => {
-        document.querySelectorAll('.sample .playing')[bufNum].classList.remove('active');
-    });
+function* notes() {
+    let i = 0;
+    let octave = 2;
+    while (true) {
+        if (i % 12 === 0) octave++;
+        note = noteNames[i % 12];
+        i++;
+        yield [octave, note];
+    }
 }
 
 function onMidiMessage(event) {
@@ -79,14 +77,28 @@ function onMidiMessage(event) {
     }
 }
 
+function play(bufNum, gain) {
+    const buf = buffers[bufNum];
+    const bufSrc = audioCtx.createBufferSource();
+    bufSrc.buffer = buf;
+    bufSrc.connect(gainNode);
+    gainNode.gain.setValueAtTime(gain, audioCtx.currentTime);
+    bufSrc.start(0);
+    log(`started ${bufNum}`);
+    document.querySelectorAll('.sample__bang')[bufNum].classList.add('sample__bang--active');
+    bufSrc.addEventListener('ended', (_event) => {
+        document.querySelectorAll('.sample__bang')[bufNum].classList.remove('sample__bang--active');
+    });
+}
+
 loadSamples();
 
 navigator.requestMIDIAccess()
     .then((access) => {
         const inputs = access.inputs.values();
-        Array.from(inputs).forEach(_ => {
+        for (const _ of inputs) {
             if (_.name === 'IAC Driver Bus 1') {
                 _.onmidimessage = onMidiMessage;
             }
-        });
+        }
     });

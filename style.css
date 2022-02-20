@@ -1,14 +1,60 @@
+:root {
+    --ui-dark: hsla(0, 0%, 10%, 1);
+    --ui-light: hsla(0, 0%, 90%, 1);
+}
+
+@font-face {
+    font-family: "Input Mono";
+    src: url(./assets/fonts/input_mono_regular.ttf);
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
-    background: hsla(0, 0%, 10%, 1);
-    color: hsla(0, 0%, 90%, 1);
-    font-family: "Fira Code";
+    background: var(--ui-dark);
+    color: var(--ui-light);
+    font-family: "Input Mono";
     font-size: 14px;
     margin: 0;
     width: 100vw;
+}
+
+.sample__bang,
+.sample__channel,
+.sample__octave {
+    width: 10px;
+}
+
+.sample__bang {
+    color: var(--ui-dark);
+}
+
+.sample__bang--active {
+    color: var(--ui-light);
+}
+
+.sample__delay,
+.sample__reverb {
+    width: 40px;
+}
+
+.sample__file {
+    width: 100px;
+}
+
+.sample__note {
+    width: 20px;
+}
+
+.sample__delay-test {
+    background: linear-gradient(to right, var(--ui-light) 0%, var(--ui-light) 30%, var(--ui-dark) 30%);
+    border: 1px solid var(--ui-light);
+    display: inline-block;
+    height: 10px;
+    margin-top: 3px;
+    width: 40px;
 }
 
 .samples {
@@ -20,18 +66,13 @@ body {
     column-gap: 10px;
     display: flex;
     flex-direction: row;
+    height: 18px;
 }
 
-.sample span {
-    width: 20px;
-}
-
-.playing {
-    color: hsla(0, 0%, 10%, 1);
-}
-
-.active {
-    color: hsla(0, 0%, 90%, 1);
+.sample-header {
+    border-bottom: 1px solid var(--ui-light);
+    height: 22px;
+    margin-bottom: 6px;
 }
 
 .log {
