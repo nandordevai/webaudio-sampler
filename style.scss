@@ -1,0 +1,92 @@
+:root {
+    --ui-dark: hsla(0, 0%, 10%, 1);
+    --ui-light: hsla(0, 0%, 90%, 1);
+}
+
+@font-face {
+    font-family: "Input Mono";
+    src: url(./assets/fonts/input_mono_regular.ttf);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--ui-dark);
+    color: var(--ui-light);
+    font-family: "Input Mono";
+    font-size: 14px;
+    margin: 20px;
+    width: 400px;
+}
+
+.command {
+    margin-top: 20px;
+
+    &__input {
+        background: var(--ui-dark);
+        border: 1px solid var(--ui-light);
+        font-family: "Input Mono";
+        font-size: 16px;
+        color: 1px solid var(--ui-light);
+        width: 100%;
+    }
+}
+
+.log {
+    height: 300px;
+    overflow: scroll;
+    white-space: pre;
+    width: 100%;
+}
+
+.sample {
+    column-gap: 10px;
+    display: flex;
+    flex-direction: row;
+    height: 18px;
+
+    &__bang,
+    &__channel,
+    &__octave {
+        width: 10px;
+    }
+
+    &__bang {
+        color: var(--ui-dark);
+    }
+
+    &__bang--active {
+        color: var(--ui-light);
+    }
+
+    &__delay,
+    &__reverb {
+        width: 40px;
+    }
+
+    &__file {
+        width: 100px;
+    }
+
+    &__note {
+        width: 20px;
+    }
+
+    &__send {
+        border: 1px solid var(--ui-light);
+        display: inline-block;
+        height: 10px;
+        margin-top: 3px;
+        width: 40px;
+    }
+}
+
+.samples {
+    &__header {
+        border-bottom: 1px solid var(--ui-light);
+        height: 22px;
+        margin-bottom: 6px;
+    }
+}

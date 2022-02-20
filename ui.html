@@ -12,51 +12,64 @@
 
 <body>
     <div class="samples">
-        <div class="sample sample-header">
-            <span class="sample__bang"></span>
-            <span class="sample__channel">c</span>
-            <span class="sample__octave">o</span>
-            <span class="sample__note">n</span>
-            <span class="sample__file">sample</span>
-            <span class="sample__delay">del</span>
-            <span class="sample__reverb">rev</span>
+        <div class="samples__header">
+            <div class="sample">
+                <span class="sample__num">#</span>
+                <span class="sample__bang sample__bang--active">*</span>
+                <span class="sample__channel">c</span>
+                <span class="sample__octave">o</span>
+                <span class="sample__note">n</span>
+                <span class="sample__file">sample</span>
+                <span class="sample__delay">del</span>
+                <span class="sample__reverb">rev</span>
+            </div>
         </div>
-        <div class="sample">
-            <span class="sample__bang sample__bang--active">*</span>
-            <span class="sample__channel">1</span>
-            <span class="sample__octave">3</span>
-            <span class="sample__note">C</span>
-            <span class="sample__file">Kick</span>
-            <span class="sample__delay">0</span>
-            <span class="sample__reverb">0</span>
+        <div class="samples_samplelist">
+            <div class="sample">
+                <span class="sample__num">0</span>
+                <span class="sample__bang sample__bang--active">*</span>
+                <span class="sample__channel">1</span>
+                <span class="sample__octave">3</span>
+                <span class="sample__note">C</span>
+                <span class="sample__file">Kick</span>
+                <span class="sample__delay sample__slider"></span>
+                <span class="sample__reverb sample__slider"></span>
+            </div>
+            <div class="sample">
+                <span class="sample__num">1</span>
+                <span class="sample__bang">*</span>
+                <span class="sample__channel">1</span>
+                <span class="sample__octave">3</span>
+                <span class="sample__note">C#</span>
+                <span class="sample__file">Snare</span>
+                <span class="sample__delay sample__slider"></span>
+                <span class="sample__reverb sample__slider"></span>
+            </div>
+            <div class="sample">
+                <span class="sample__num">2</span>
+                <span class="sample__bang">*</span>
+                <span class="sample__channel">1</span>
+                <span class="sample__octave">3</span>
+                <span class="sample__note">D</span>
+                <span class="sample__file">Openhat</span>
+                <span class="sample__delay sample__slider"></span>
+                <span class="sample__reverb sample__slider"></span>
+            </div>
+            <div class="sample">
+                <span class="sample__num">3</span>
+                <span class="sample__bang">*</span>
+                <span class="sample__channel">1</span>
+                <span class="sample__octave">3</span>
+                <span class="sample__note">D#</span>
+                <span class="sample__file">Clap</span>
+                <span class="sample__delay sample__slider"></span>
+                <span class="sample__reverb sample__slider"></span>
+            </div>
         </div>
-        <div class="sample">
-            <span class="sample__bang">*</span>
-            <span class="sample__channel">1</span>
-            <span class="sample__octave">3</span>
-            <span class="sample__note">C#</span>
-            <span class="sample__file">Snare</span>
-            <span class="sample__delay"><span class="sample__delay-test">&nbsp;</span></span>
-            <span class="sample__reverb">0.3</span>
-        </div>
-        <div class="sample">
-            <span class="sample__bang">*</span>
-            <span class="sample__channel">1</span>
-            <span class="sample__octave">3</span>
-            <span class="sample__note">D</span>
-            <span class="sample__file">Openhat</span>
-            <span class="sample__delay">0</span>
-            <span class="sample__reverb">0.1</span>
-        </div>
-        <div class="sample">
-            <span class="sample__bang">*</span>
-            <span class="sample__channel">1</span>
-            <span class="sample__octave">3</span>
-            <span class="sample__note">D#</span>
-            <span class="sample__file">Clap</span>
-            <span class="sample__delay">0</span>
-            <span class="sample__reverb">0.4</span>
-        </div>
+    </div>
+
+    <div class="command">
+        <input type="text" class="command__input">
     </div>
 
     <div class="log"></div>
