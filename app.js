@@ -1,6 +1,8 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 // https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html
 
+const $$ = document.querySelectorAll.bind(document);
+
 let buffers = [];
 const channels = [
     {
@@ -57,9 +59,9 @@ function addToList(i) {
         <span class="sample__octave">${octave}</span>
         <span class="sample__note">${note}</span>
         <span class="sample__file">${name}</span>
-        <span class="sample__delay sample__slider"></span>
-        <span class="sample__reverb sample__slider"></span>
-        <span class="sample__gain sample__slider"></span>
+        <span class="sample__delay sample__send"></span>
+        <span class="sample__reverb sample__send"></span>
+        <span class="sample__gain sample__send"></span>
     `;
     document.querySelector('.sample__list').appendChild(el);
     setSend('delay', i);
@@ -86,9 +88,9 @@ function log(msg) {
 
 function* notes() {
     let i = 0;
-    let octave = 2;
+    let octave = 3;
     while (true) {
-        if (i % 12 === 0) octave++;
+        if (i > 0 && i % 12 === 0);
         note = noteNames[i % 12];
         i++;
         yield [octave, note];
@@ -110,19 +112,22 @@ function onMidiMessage(event) {
 }
 
 function play(bufNum, gain) {
-    // the routing is completely wrong now but hey :)
     const buf = buffers[bufNum];
     const bufSrc = ctx.createBufferSource();
     bufSrc.buffer = buf;
-    bufSrc.connect(masterGain);
-    bufSrc.connect(delayBusGain);
-    masterGain.gain.setValueAtTime(gain * channels[bufNum].gain, ctx.currentTime);
-    delayBusGain.gain.setValueAtTime(channels[bufNum].delay, ctx.currentTime);
+    const sendMasterGain = ctx.createGain();
+    const sendDelayGain = ctx.createGain();
+    bufSrc.connect(sendMasterGain);
+    bufSrc.connect(sendDelayGain);
+    sendMasterGain.gain.setValueAtTime(gain * channels[bufNum].gain, ctx.currentTime);
+    sendDelayGain.gain.setValueAtTime(channels[bufNum].delay, ctx.currentTime);
+    sendMasterGain.connect(masterGain);
+    sendDelayGain.connect(delayBusGain);
     bufSrc.start(0);
     // log(`started ${bufNum}`);
-    document.querySelectorAll('.sample__bang')[bufNum + 1].classList.add('sample__bang--active');
+    $$('.sample__bang')[bufNum + 1].classList.add('sample__bang--active');
     bufSrc.addEventListener('ended', (_event) => {
-        document.querySelectorAll('.sample__bang')[bufNum + 1].classList.remove('sample__bang--active');
+        $$('.sample__bang')[bufNum + 1].classList.remove('sample__bang--active');
     });
 }
 
@@ -152,7 +157,7 @@ function setSend(fx, channel, value = null) {
     } else {
         value = channels[channel][fx];
     }
-    const el = document.querySelectorAll(`.sample__list .sample__${fx}`)[channel];
+    const el = $$(`.sample__list .sample__${fx}`)[channel];
     el.style.background = `
         linear-gradient(to right, var(--ui-light) 0%,
             var(--ui-light) ${value * 100}%,

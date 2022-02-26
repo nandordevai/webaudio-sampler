@@ -1,0 +1,55 @@
+<!doctype html>
+<title>SVG test</title>
+<style>
+svg {
+    border: 1px solid black
+}
+</style>
+<svg width="600" height="300"></svg>
+<script>
+const ns = 'http://www.w3.org/2000/svg';
+const path = document.createElementNS(ns, 'path');
+// path.setAttributeNS(null, 'd', 'M100,100 L400,100');
+const arc = () => {
+    //  A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+    const params = {
+        rx: 50,
+        ry: 100,
+        xAxisRotation: 10,
+        largeArcFlag: 0,
+        sweepFlag: 1, // "direction" of the arc
+        x: 200,
+        y: 200,
+    };
+    return `A ${Object.values(params).join(' ')}`;
+};
+const curve = () => {
+    const params = {
+        x1: 10,
+        y1: 100,
+        x2: 200,
+        y2: 200,
+        x: 80,
+        y: 20,
+    };
+    return `C ${Object.values(params).join(' ')}`;
+};
+const qcurve = () => {
+    const params = {
+        x1: 150,
+        y1: 100,
+        x: 200,
+        y: 200,
+    };
+    return `Q ${Object.values(params).join(' ')}`;
+};
+// path.setAttributeNS(null, 'd', `M 100 100 ${arc()}`);
+// path.setAttributeNS(null, 'd', `M 100 100 ${qcurve()}`);
+path.setAttributeNS(null, 'd', 'M 100 100 L 200 100 Q 270 100 300 200');
+// stroke-width: 15px; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(10, 10, 10); fill: none;
+path.style.strokeWidth = '15px';
+path.style.stroke = 'hsla(0, 0%, 5%, 1)';
+path.style.strokeLinecap = 'round';
+path.style.fill = 'none';
+document.querySelector('svg').appendChild(path);
+</script>

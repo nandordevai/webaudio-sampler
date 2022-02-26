@@ -64,7 +64,7 @@ body {
 .sample__note {
   width: 20px;
 }
-.sample__slider {
+.sample__send {
   border: 1px solid var(--ui-light);
   display: inline-block;
   height: 10px;
