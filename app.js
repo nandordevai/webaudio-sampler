@@ -2,32 +2,60 @@
 // https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html
 
 const $$ = document.querySelectorAll.bind(document);
-
+const $ = document.querySelector.bind(document);
+const lvl = {
+    info: 0,
+    warning: 1,
+    error: 2,
+};
+const logLevel = 2;
 let buffers = [];
+const widgetWidth = 37;
+const widgetHeight = 10;
 const channels = [
     {
         sample: 'Kick.wav',
         gain: 1.0,
         delay: 0.0,
         reverb: 0.0,
+        filter: {
+            type: 'lp',
+            freq: 20000,
+            q: 0,
+        }
     },
     {
         sample: 'Snare.wav',
         gain: 1.0,
         delay: 0.0,
         reverb: 0.3,
+        filter: {
+            type: 'hp',
+            freq: 5000,
+            q: 0,
+        }
     },
     {
         sample: 'Closedhat.wav',
         gain: 1.0,
         delay: 0.0,
         reverb: 0.0,
+        filter: {
+            type: 'lp',
+            freq: 10000,
+            q: 0,
+        }
     },
     {
         sample: 'Clap.wav',
         gain: 1.0,
         delay: 0.5,
         reverb: 0.0,
+        filter: {
+            type: 'lp',
+            freq: 15000,
+            q: 0,
+        }
     },
 ];
 
@@ -62,11 +90,30 @@ function addToList(i) {
         <span class="sample__delay sample__send"></span>
         <span class="sample__reverb sample__send"></span>
         <span class="sample__gain sample__send"></span>
+        <span class="sample__filter">
+            <svg class="sample__filter-vis"
+             width="${widgetWidth}" height="${widgetHeight}"></svg>
+        </span>
     `;
-    document.querySelector('.sample__list').appendChild(el);
+    $('.sample__list').appendChild(el);
     setSend('delay', i);
     setSend('reverb', i);
     setSend('gain', i);
+    setFilter(i);
+}
+
+function setFilter(i) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const path = document.createElementNS(ns, 'path');
+    const curves = {
+        lp: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
+        hp: (f) => `M ${widgetWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
+    };
+    const f = ((widgetWidth - 1) / 20000) * channels[i].filter.freq;
+    const curve = curves[channels[i].filter.type](f);
+    path.setAttribute('d', curve);
+    path.setAttribute('class', 'filter-curve');
+    $$('svg')[i].appendChild(path);
 }
 
 async function loadSamples() {
@@ -74,14 +121,15 @@ async function loadSamples() {
     const res = await Promise.all(urls.map(_ => fetch(_)));
     const aBufs = await Promise.all(res.map(_ => _.arrayBuffer()));
     buffers = await Promise.all(aBufs.map((_, i) => {
-        // log(`${samples[i]} loaded`);
+        // log(lvl.info, `${samples[i]} loaded`);
         addToList(i);
         return ctx.decodeAudioData(_);
     }));
 }
 
-function log(msg) {
-    const el = document.querySelector('.log');
+function log(level, msg) {
+    if (level < logLevel) return;
+    const el = $('.log');
     el.innerText += `${msg}\n`;
     el.scrollTop = el.scrollHeight;
 }
@@ -172,7 +220,7 @@ function setSendFromCC(cc) {
 }
 
 loadSamples();
-document.querySelector('.command__input').addEventListener('keydown', (event) => { processCommand(event); });
+$('.command__input').addEventListener('keydown', (event) => { processCommand(event); });
 
 navigator.requestMIDIAccess()
     .then((access) => {

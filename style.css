@@ -1,6 +1,8 @@
 :root {
   --ui-dark: hsla(0, 0%, 10%, 1);
   --ui-light: hsla(0, 0%, 90%, 1);
+  --ui-light-secondary: hsla(0, 0%, 60%, 1);
+  --ui-light-tertiary: hsla(0, 0%, 40%, 1);
 }
 
 @font-face {
@@ -71,9 +73,29 @@ body {
   margin-top: 3px;
   width: 40px;
 }
+.sample__filter {
+  display: inline-block;
+  height: 10px;
+  width: 40px;
+}
+.sample__filter-vis {
+  background: var(--ui-dark);
+  border-right: 1px solid var(--ui-light-tertiary);
+  border-left: 1px solid var(--ui-light-tertiary);
+}
 
 .samples__header {
   border-bottom: 1px solid var(--ui-light);
+  color: var(--ui-light-secondary);
   height: 22px;
   margin-bottom: 6px;
+}
+.samples__header * {
+  color: var(--ui-light-secondary);
+}
+
+.filter-curve {
+  fill: none;
+  stroke: var(--ui-light);
+  stroke-width: 1.2px;
 }/*# sourceMappingURL=style.css.map */
