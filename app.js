@@ -19,7 +19,7 @@ const channels = [
         delay: 0.0,
         reverb: 0.0,
         filter: {
-            type: 'lp',
+            type: 'lowpass',
             freq: 20000,
             q: 0,
         }
@@ -30,8 +30,8 @@ const channels = [
         delay: 0.0,
         reverb: 0.3,
         filter: {
-            type: 'hp',
-            freq: 5000,
+            type: 'bandpass',
+            freq: 10000,
             q: 0,
         }
     },
@@ -41,7 +41,7 @@ const channels = [
         delay: 0.0,
         reverb: 0.0,
         filter: {
-            type: 'lp',
+            type: 'lowpass',
             freq: 10000,
             q: 0,
         }
@@ -52,7 +52,7 @@ const channels = [
         delay: 0.5,
         reverb: 0.0,
         filter: {
-            type: 'lp',
+            type: 'lowpass',
             freq: 15000,
             q: 0,
         }
@@ -96,18 +96,21 @@ function addToList(i) {
         </span>
     `;
     $('.sample__list').appendChild(el);
-    setSend('delay', i);
-    setSend('reverb', i);
-    setSend('gain', i);
-    setFilter(i);
+    setFX('delay', i);
+    setFX('reverb', i);
+    setFX('gain', i);
+    updateFilterUI(i);
 }
 
-function setFilter(i) {
+function updateFilterUI(i) {
+    const oldEl = $$('svg')[i].querySelector('.filter-curve');
+    if (oldEl !== null) $$('svg')[i].removeChild(oldEl);
     const ns = 'http://www.w3.org/2000/svg';
     const path = document.createElementNS(ns, 'path');
     const curves = {
-        lp: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
-        hp: (f) => `M ${widgetWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
+        lowpass: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
+        highpass: (f) => `M ${widgetWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
+        bandpass: (f) => `M ${f - 5} 1 Q ${f} 1 ${f} 10 M ${f - 5} 1 Q ${f - 10} 1 ${f - 10} 10`,
     };
     const f = ((widgetWidth - 1) / 20000) * channels[i].filter.freq;
     const curve = curves[channels[i].filter.type](f);
@@ -146,15 +149,15 @@ function* notes() {
 }
 
 function onMidiMessage(event) {
-    const channel = event.data[0] & 0xf;
-    if (channel === 1) {
+    const ch = event.data[0] & 0xf;
+    if (ch === 1) {
         const sampleNum = event.data[1] - 60;
         if (event.data[0] >> 4 === 9) {
             // TODO: make gain logarithmic
             play(sampleNum, event.data[2] / 127);
         } else if (event.data[0] >> 4 === 8) {
         } else if (event.data[0] >> 4 === 11) {
-            setSendFromCC(event.data);
+            setFXFromCC(event.data);
         }
     }
 }
@@ -165,14 +168,18 @@ function play(bufNum, gain) {
     bufSrc.buffer = buf;
     const sendMasterGain = ctx.createGain();
     const sendDelayGain = ctx.createGain();
-    bufSrc.connect(sendMasterGain);
     bufSrc.connect(sendDelayGain);
     sendMasterGain.gain.setValueAtTime(gain * channels[bufNum].gain, ctx.currentTime);
     sendDelayGain.gain.setValueAtTime(channels[bufNum].delay, ctx.currentTime);
+    const filter = ctx.createBiquadFilter();
+    filter.type = channels[bufNum].filter.type;
+    filter.frequency.setValueAtTime(channels[bufNum].filter.freq, ctx.currentTime);
+    bufSrc.connect(filter);
+    filter.connect(sendMasterGain);
     sendMasterGain.connect(masterGain);
     sendDelayGain.connect(delayBusGain);
     bufSrc.start(0);
-    // log(`started ${bufNum}`);
+    log(lvl.info, `started ${bufNum}`);
     $$('.sample__bang')[bufNum + 1].classList.add('sample__bang--active');
     bufSrc.addEventListener('ended', (_event) => {
         $$('.sample__bang')[bufNum + 1].classList.remove('sample__bang--active');
@@ -181,42 +188,67 @@ function play(bufNum, gain) {
 
 function processCommand(event) {
     if (event.key !== 'Enter') return;
-    const command = event.target.value;
-    const channel = command[0];
-    const param = command[1];
-    const value = parseFloat(command.slice(2));
-    setParam(channel, param, value);
+    const cmd = event.target.value;
+    const ch = cmd[0];
+    const param = cmd[1];
+    log(lvl.info, `cmd: ${cmd} ${ch} ${param}`);
+    let value = parseFloat(cmd.slice(2));
+    if (isNaN(value)) {
+        value = cmd.slice(2);
+    }
+    setParam(ch, param, value);
     event.target.value = '';
 }
 
-function setParam(channel, param, value) {
-    if (param.toLowerCase() === 'd') {
-        setSend('delay', channel, value);
-    } else if (param.toLowerCase() === 'r') {
-        setSend('reverb', channel, value);
-    } else if (param.toLowerCase() === 'g') {
-        setSend('gain', channel, value);
+function setParam(ch, param, val) {
+    const fx = ['delay', 'reverb', 'gain', 'filter'];
+    const cfx = fx.find(_ => _[0] === param.toLowerCase());
+    if (cfx === 'filter') {
+        setFilter(ch, val);
+    } else {
+        setFX(cfx, ch, val);
     }
 }
 
-function setSend(fx, channel, value = null) {
-    if (value !== null) {
-        channels[channel][fx] = value;
+function setFilter(ch, val = null) {
+    const fTypes = {
+        lp: 'lowpass',
+        hp: 'highpass',
+        bp: 'bandpass',
+    };
+    if (val === null) {
+        val = channels[ch].filter.freq;
+    } else if (Object.keys(fTypes).includes(val)) {
+        channels[ch].filter.type = fTypes[val];
     } else {
-        value = channels[channel][fx];
+        channels[ch].filter.freq = val;
     }
-    const el = $$(`.sample__list .sample__${fx}`)[channel];
+    updateFilterUI(ch, val);
+}
+
+function setFX(fx, ch, val = null) {
+    if (val !== null) {
+        channels[ch][fx] = val;
+    } else {
+        val = channels[ch][fx];
+    }
+    const el = $$(`.sample__list .sample__${fx}`)[ch];
+    updateFXUI(el, val);
+}
+
+function updateFXUI(el, val) {
     el.style.background = `
         linear-gradient(to right, var(--ui-light) 0%,
-            var(--ui-light) ${value * 100}%,
-            var(--ui-dark) ${value * 100}%)
+            var(--ui-light) ${val * 100}%,
+            var(--ui-dark) ${val * 100}%)
     `;
 }
 
-function setSendFromCC(cc) {
+function setFXFromCC(cc) {
     const i = (cc[1] - 64) % channels.length;
-    const fx = cc[1] - 64 >= channels.length ? 'reverb' : 'delay';
-    setSend(fx, i, cc[2] / 127);
+    const fx = ['d', 'r', 'g', 'f'][Math.floor((cc[1] - 64) / 4)];
+    const val = fx === 'f' ? cc[2] / 127 * 20000 : cc[2] / 127;
+    setParam(i, fx, val);
 }
 
 loadSamples();
