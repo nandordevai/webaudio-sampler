@@ -1,5 +1,7 @@
-import { fxWidth, fxHeight } from './settings.js';
 import { clamp } from './lib.js';
+
+const fxWidth = 37;
+const fxHeight = 10;
 
 export const Track = {
     num: null,
@@ -15,6 +17,7 @@ export const Track = {
         type: 'lowpass',
     },
     el: null,
+    buffer: null,
 
     createEl(html) {
         const t = document.createElement('template');
