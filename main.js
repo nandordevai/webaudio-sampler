@@ -9,7 +9,7 @@ try {
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 440,
-        height: 600,
+        height: 400,
         frame: false,
     });
 
