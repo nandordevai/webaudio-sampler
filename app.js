@@ -2,9 +2,8 @@
 // https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html
 // https://github.com/GoogleChromeLabs/web-audio-samples
 
-import { $, $$ } from './lib.js';
+import { $ } from './lib.js';
 import { Sampler } from './Sampler.js';
-import { Track } from './Track.js';
 import { Mixer } from './Mixer.js';
 
 const samples = ['Kick.wav', 'Snare.wav', 'Closedhat.wav', 'Clap.wav'];
@@ -44,7 +43,7 @@ function processCommand(event) {
     if (isNaN(value)) {
         value = cmd.slice(2);
     }
-    // FIXME
+    // FIXME: call sampler instead
     sampler.tracks[ch].setParam(param, value);
     event.target.value = '';
 }

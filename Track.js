@@ -112,4 +112,14 @@ export const Track = {
             this.setFX(cfx, val);
         }
     },
+
+    setPlaying(status) {
+        const el = this.el.querySelector('.sample__bang');
+        const c = 'sample__bang--active';
+        if (status) {
+            el.classList.add(c);
+        } else {
+            el.classList.remove(c);
+        }
+    },
 };

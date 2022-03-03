@@ -1,4 +1,4 @@
-import { $, $$ } from './lib.js';
+import { $ } from './lib.js';
 import { Track } from './Track.js';
 
 export const Sampler = {
@@ -63,9 +63,9 @@ export const Sampler = {
         filter.connect(trackOut);
 
         bufSrc.start(0);
-        t.el.querySelector('.sample__bang').classList.add('sample__bang--active');
+        t.setPlaying(true);
         bufSrc.addEventListener('ended', (_event) => {
-            t.el.querySelector('.sample__bang').classList.remove('sample__bang--active');
+            t.setPlaying(false);
         });
     },
 

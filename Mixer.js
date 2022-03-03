@@ -6,6 +6,7 @@ export const Mixer = {
         this.master = this.ctx.createGain();
         this.master.connect(out);
 
+        // TODO: set delay time from MIDI clock
         const delay = this.ctx.createDelay(5.0);
         const delayFeedback = this.ctx.createGain();
         delayFeedback.gain.value = .2;
