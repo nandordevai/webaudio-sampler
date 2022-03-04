@@ -6,6 +6,7 @@ import { $ } from './lib.js';
 import { Sampler } from './Sampler.js';
 import { Mixer } from './Mixer.js';
 import { MIDIClock } from './MIDIClock.js';
+import { MIDIMessage } from './MIDIMessage.js';
 
 const samples = ['Kick.wav', 'Snare.wav', 'Closedhat.wav', 'Clap.wav'];
 const ctx = new window.AudioContext();
@@ -23,33 +24,31 @@ async function loadSamples() {
 }
 
 function onMidiMessage(event) {
-    if (event.data[0] === 0xf8) {
+    const msg = MIDIMessage(event);
+    if (msg.ch !== sampler.midiCh) return;
+
+    if (msg.type === 'clock') {
         clock.tick();
+        return;
     }
-    const ch = event.data[0] & 0xf;
-    if (ch !== sampler.midiCh) return;
-        const trackNum = event.data[1] - 60;
-        if (event.data[0] >> 4 === 9) {
-            // TODO: make gain logarithmic
-            sampler.play(trackNum, event.data[2] / 127);
-        } else if (event.data[0] >> 4 === 8) {
-        // note off
-        } else if (event.data[0] >> 4 === 11) {
-            sampler.setFXFromCC(event.data);
+
+    if (msg.type === 'noteOn') {
+        sampler.play(msg.note, msg.vel / 127);
+    } else if (msg.type === 'cc') {
+        sampler.handleCC(msg.cc, msg.val);
     }
 }
 
 function processCommand(event) {
     if (event.key !== 'Enter') return;
     const cmd = event.target.value;
-    const ch = cmd[0];
+    const track = cmd[0];
     const param = cmd[1];
     let value = parseFloat(cmd.slice(2));
     if (isNaN(value)) {
         value = cmd.slice(2);
     }
-    // FIXME: call sampler instead
-    sampler.tracks[ch].setParam(param, value);
+    sampler.setTrackParam(track, param, value);
     event.target.value = '';
 
 }
@@ -69,5 +68,8 @@ navigator.requestMIDIAccess()
     });
 
 setInterval(() => {
-    $('.bpm__value').innerText = clock.bpm();
+    const bpm = clock.bpm();
+    if (bpm !== Infinity) {
+        $('.bpm__value').innerText = bpm;
+    }
 }, 1000);

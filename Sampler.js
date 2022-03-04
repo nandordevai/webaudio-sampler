@@ -41,7 +41,8 @@ export const Sampler = {
         this.tracks.push(track);
     },
 
-    play(trackNum, velocity) {
+    play(note, velocity) {
+        const trackNum = note - 60;
         const t = this.tracks[trackNum];
         const bufSrc = this.ctx.createBufferSource();
         bufSrc.buffer = t.buffer;
@@ -69,11 +70,6 @@ export const Sampler = {
         });
     },
 
-    setFXFromCC(msg) {
-        // TODO
-        const i = (event.data[1] - 64) % this.tracks.length;
-    },
-
     async loadSample(path) {
         await fetch(path)
             .then(res => res.arrayBuffer())
@@ -82,5 +78,13 @@ export const Sampler = {
                 const name = path.split('/').slice(-1)[0].split('.')[0];
                 this.addTrack(name, buffer);
             });
+    },
+
+    setTrackParam(n, param, value) {
+        this.tracks[n].setParam(param, value);
+    },
+
+    handleCC(cc, val) {
+        //
     },
 };
