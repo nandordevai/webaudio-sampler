@@ -26,7 +26,7 @@ export function MIDIMessage(event) {
         } else if (tb === 8) {
             type = 'noteOff';
             note = event.data[1];
-        } else if (tb === 1) {
+        } else if (tb === 11) {
             type = 'cc';
             cc = event.data[1];
             val = event.data[2];

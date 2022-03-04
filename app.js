@@ -25,12 +25,12 @@ async function loadSamples() {
 
 function onMidiMessage(event) {
     const msg = MIDIMessage(event);
-    if (msg.ch !== sampler.midiCh) return;
-
     if (msg.type === 'clock') {
         clock.tick();
         return;
     }
+
+    if (msg.ch !== sampler.midiCh) return;
 
     if (msg.type === 'noteOn') {
         sampler.play(msg.note, msg.vel / 127);

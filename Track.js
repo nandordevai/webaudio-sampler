@@ -93,10 +93,10 @@ export const Track = {
         this.el.querySelector('svg').appendChild(path);
     },
 
-    setFXFromCC(cc) {
-        const fx = ['d', 'r', 'g', 'f'][Math.floor((cc[1] - 64) / 4)];
-        const val = fx === 'f' ? cc[2] / 127 * 20000 : cc[2] / 127;
-        this.setParam(fx, val);
+    setFXFromCC(cc, val) {
+        const param = ['d', 'r', 'g', 'f'][Math.floor((cc - 64) / 4)];
+        const value = param === 'f' ? val / 127 * 20000 : val / 127;
+        this.setParam(param, value);
     },
 
     setParam(param, val) {

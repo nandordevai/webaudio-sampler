@@ -85,6 +85,7 @@ export const Sampler = {
     },
 
     handleCC(cc, val) {
-        //
+        const t = Math.floor((cc - 64) / this.tracks.length);
+        this.tracks[t].setFXFromCC(cc, val);
     },
 };
