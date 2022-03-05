@@ -14,7 +14,7 @@ const mixer = Object.assign(Object.create(Mixer), { ctx });
 mixer.init();
 const sampler = Object.assign(Object.create(Sampler), { ctx, mixer, });
 sampler.init();
-const clock = Object.create(MIDIClock);
+const clock = Object.assign(Object.create(MIDIClock), { ctx });
 let inputs = null;
 let selectedInput = null;
 
@@ -90,6 +90,6 @@ setInterval(() => {
     const bpm = clock.bpm();
     if (bpm !== Infinity) {
         $('.bpm').innerText = `${bpm < 100 ? ' ' : ''}${bpm} bpm`;
-        mixer.setDelayTime(clock.period * 6);
+        mixer.setDelayTime(1 / bpm / 60 * 1000);
     }
-}, 1000);
+}, 100);
