@@ -1,6 +1,9 @@
+import { Reverb } from './Reverb.js';
+
 export const Mixer = {
     ctx: null,
     delay: null,
+    reverb: null,
 
     init() {
         const out = this.ctx.destination;
@@ -16,6 +19,11 @@ export const Mixer = {
         this.delay.delayTime.value = .125;
         this.delayBus = this.ctx.createGain();
         this.delayBus.connect(this.delay);
+
+        this.reverbBus = this.ctx.createGain();
+        this.reverb = Reverb(this.ctx);
+        this.reverbBus.connect(this.reverb);
+        this.reverb.connect(this.master);
     },
 
     setDelayTime(t) {
