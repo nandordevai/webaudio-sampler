@@ -33,6 +33,7 @@ export const Sampler = {
             midiCh: this.midiCh,
             buffer
         });
+        track.init();
         $('.sample__list').appendChild(track.render());
         track.setFX('delay');
         track.setFX('reverb');
@@ -49,8 +50,7 @@ export const Sampler = {
         bufSrc.buffer = t.buffer;
 
         const trackOut = this.ctx.createGain();
-        trackOut.gain.setValueAtTime(velocity * t.gain,
-            this.ctx.currentTime);
+        trackOut.gain.setValueAtTime(velocity * t.gain, this.ctx.currentTime);
         trackOut.connect(this.mixer.master);
 
         const filter = this.ctx.createBiquadFilter();

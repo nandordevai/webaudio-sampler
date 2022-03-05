@@ -1,3 +1,6 @@
+// https://github.com/hundredrabbits/Orca/issues/257
+// https://www.html5rocks.com/en/tutorials/audio/scheduling/
+
 export const MIDIClock = {
     buffer: Array(50).fill(120),
     t0: null,

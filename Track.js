@@ -2,6 +2,11 @@ import { clamp } from './lib.js';
 
 const fxWidth = 37;
 const fxHeight = 10;
+const fTypes = {
+    lp: 'lowpass',
+    hp: 'highpass',
+    bp: 'bandpass',
+};
 
 export const Track = {
     num: null,
@@ -12,12 +17,16 @@ export const Track = {
     delay: 0.0,
     reverb: 0.0,
     gain: 1.0,
-    filter: {
-        freq: 20000,
-        type: 'lowpass',
-    },
+    filter: null,
     el: null,
     buffer: null,
+
+    init() {
+        this.filter = Object.create({
+            freq: 20000,
+            type: 'lowpass',
+        });
+    },
 
     createEl(html) {
         const t = document.createElement('template');
@@ -65,12 +74,7 @@ export const Track = {
     },
 
     setFilter(freq = null, type = null) {
-        const fTypes = {
-            lp: 'lowpass',
-            hp: 'highpass',
-            bp: 'bandpass',
-        };
-        if (freq !== null) this.filter.freq = clamp(freq, 0, 20000);
+        if (freq !== null) this.filter.freq = clamp(freq, 20, 20000);
         if (type !== null) this.filter.type = fTypes[type];
         this.updateFilterUI();
     },
@@ -85,7 +89,8 @@ export const Track = {
             highpass: (f) => `M ${fxWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
             bandpass: (f) => `M ${f} 1 Q ${f + 5} 1 ${f + 5} 10 M ${f} 1 Q ${f - 5} 1 ${f - 5} 10`,
         };
-        const f = ((fxWidth - 1) / 20000) * this.filter.freq;
+        // log scale magic formula
+        const f = ((fxWidth - 1 + 10) / 4.4) * Math.log10(this.filter.freq) - 10;
         const curve = curves[this.filter.type](f);
         path.setAttribute('d', curve);
         path.setAttribute('class', 'filter-curve');
@@ -93,6 +98,7 @@ export const Track = {
     },
 
     setFXFromCC(cc, val) {
+        // TODO: handle CC message on stop
         const param = ['d', 'r', 'g', 'f'][Math.floor((cc - 64) / 4)];
         const value = param === 'f' ? val / 127 * 20000 : val / 127;
         this.setParam(param, value);
