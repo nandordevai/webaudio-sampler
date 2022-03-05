@@ -3,7 +3,7 @@ import { Track } from './Track.js';
 
 export const Sampler = {
     tracks: [],
-    midiCh: 1,
+    midiCh: 0,
     noteNames: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
     ctx: null,
     mixer: null,
