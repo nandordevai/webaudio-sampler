@@ -22,10 +22,10 @@ export const Track = {
     buffer: null,
 
     init() {
-        this.filter = Object.create({
+        this.filter = {
             freq: 20000,
             type: 'lowpass',
-        });
+        };
     },
 
     createEl(html) {
@@ -98,7 +98,6 @@ export const Track = {
     },
 
     setFXFromCC(cc, val) {
-        // TODO: handle CC message on stop
         const param = ['d', 'r', 'g', 'f'][Math.floor((cc - 64) / 4)];
         const value = param === 'f' ? val / 127 * 20000 : val / 127;
         this.setParam(param, value);

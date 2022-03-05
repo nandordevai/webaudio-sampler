@@ -12,7 +12,6 @@ const createWindow = () => {
         height: 400,
         frame: false,
     });
-
     win.loadFile('index.html');
 };
 
