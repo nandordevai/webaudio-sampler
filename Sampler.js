@@ -62,12 +62,12 @@ export const Sampler = {
 
         const sendDelay = this.ctx.createGain();
         filter.connect(sendDelay);
-        sendDelay.gain.setValueAtTime(t.delay, this.ctx.currentTime);
+        sendDelay.gain.setValueAtTime(t.gain * t.delay, this.ctx.currentTime);
         sendDelay.connect(this.mixer.delayBus);
 
         const sendReverb = this.ctx.createGain();
         filter.connect(sendReverb);
-        sendReverb.gain.setValueAtTime(t.reverb, this.ctx.currentTime);
+        sendReverb.gain.setValueAtTime(t.gain * t.reverb, this.ctx.currentTime);
         sendReverb.connect(this.mixer.reverbBus);
 
         bufSrc.start(0);
