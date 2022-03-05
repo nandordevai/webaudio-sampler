@@ -15,6 +15,8 @@ mixer.init();
 const sampler = Object.assign(Object.create(Sampler), { ctx, mixer, });
 sampler.init();
 const clock = Object.create(MIDIClock);
+let inputs = null;
+let selectedInput = null;
 
 async function loadSamples() {
     const urls = samples.map(_ => `./assets/samples/${_}`);
@@ -39,6 +41,28 @@ function onMidiMessage(event) {
     }
 }
 
+function processKeyboardInput(event) {
+    if (event.target === $('.command__input')) {
+        processCommand(event);
+    } else if (event.metaKey) {
+        if (event.key === '.') selectNextInput();
+    }
+}
+
+function selectNextInput() {
+    const i = selectedInput < inputs.length - 1
+        ? selectedInput + 1
+        : 0;
+    setMIDIInput(i);
+}
+
+function setMIDIInput(i) {
+    if (selectedInput !== null) inputs[selectedInput].onmidimessage = null;
+    selectedInput = i;
+    inputs[i].onmidimessage = onMidiMessage;
+    $('.midi').innerText = inputs[i].name;
+}
+
 function processCommand(event) {
     if (event.key !== 'Enter') return;
     const cmd = event.target.value;
@@ -54,22 +78,18 @@ function processCommand(event) {
 }
 
 loadSamples();
-$('.command__input').addEventListener('keydown', (event) => { processCommand(event); });
+document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
 
-// TODO: switching between inputs (like in Orca)
 navigator.requestMIDIAccess()
     .then((access) => {
-        const inputs = access.inputs.values();
-        for (const _ of inputs) {
-            if (_.name === 'IAC Driver Bus 1') {
-                _.onmidimessage = onMidiMessage;
-            }
-        }
+        inputs = Array.from(access.inputs.values());
+        setMIDIInput(0);
+        selectedInput = 0;
     });
 
 setInterval(() => {
     const bpm = clock.bpm();
     if (bpm !== Infinity) {
-        $('.bpm__value').innerText = bpm;
+        $('.bpm').innerText = `${bpm < 100 ? ' ' : ''}${bpm} bpm`;
     }
 }, 1000);
