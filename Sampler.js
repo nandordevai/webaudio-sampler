@@ -53,16 +53,16 @@ export const Sampler = {
             this.ctx.currentTime);
         trackOut.connect(this.mixer.master);
 
-        const sendDelay = this.ctx.createGain();
-        bufSrc.connect(sendDelay);
-        sendDelay.gain.setValueAtTime(t.delay, this.ctx.currentTime);
-        sendDelay.connect(this.mixer.delayBus);
-
         const filter = this.ctx.createBiquadFilter();
         filter.type = t.filter.type;
         filter.frequency.setValueAtTime(t.filter.freq, this.ctx.currentTime);
         bufSrc.connect(filter);
         filter.connect(trackOut);
+
+        const sendDelay = this.ctx.createGain();
+        filter.connect(sendDelay);
+        sendDelay.gain.setValueAtTime(t.delay, this.ctx.currentTime);
+        sendDelay.connect(this.mixer.delayBus);
 
         bufSrc.start(0);
         t.setPlaying(true);
