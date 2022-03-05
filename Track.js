@@ -76,7 +76,6 @@ export const Track = {
     },
 
     updateFilterUI() {
-        // TODO: draw bandpass filter with the midpoint at freq
         const oldEl = this.el.querySelector('.filter-curve');
         if (oldEl !== null) this.el.querySelector('svg').removeChild(oldEl);
         const ns = 'http://www.w3.org/2000/svg';
@@ -84,7 +83,7 @@ export const Track = {
         const curves = {
             lowpass: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
             highpass: (f) => `M ${fxWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
-            bandpass: (f) => `M ${f - 5} 1 Q ${f} 1 ${f} 10 M ${f - 5} 1 Q ${f - 10} 1 ${f - 10} 10`,
+            bandpass: (f) => `M ${f} 1 Q ${f + 5} 1 ${f + 5} 10 M ${f} 1 Q ${f - 5} 1 ${f - 5} 10`,
         };
         const f = ((fxWidth - 1) / 20000) * this.filter.freq;
         const curve = curves[this.filter.type](f);
