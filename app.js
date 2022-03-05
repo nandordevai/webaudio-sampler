@@ -66,13 +66,18 @@ function setMIDIInput(i) {
 function processCommand(event) {
     if (event.key !== 'Enter') return;
     const cmd = event.target.value;
+    if (cmd === '') return;
     const track = cmd[0];
     const param = cmd[1];
     let value = parseFloat(cmd.slice(2));
     if (isNaN(value)) {
         value = cmd.slice(2);
     }
-    sampler.setTrackParam(track, param, value);
+    try {
+        sampler.setTrackParam(track, param, value);
+    } catch (TypeError) {
+        // ignore bad command
+    }
     event.target.value = '';
 }
 
