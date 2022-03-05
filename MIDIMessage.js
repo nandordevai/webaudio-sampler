@@ -1,13 +1,4 @@
 export function MIDIMessage(event) {
-    // if (event.data[0] >> 4 === 9) {
-    //     // TODO: make gain logarithmic
-    //     sampler.play(trackNum, event.data[2] / 127);
-    // } else if (event.data[0] >> 4 === 8) {
-    // // note off
-    // } else if (event.data[0] >> 4 === 11) {
-    //     // handle CC
-    //     const i = (event.data[1] - 64) % this.tracks.length;
-    // }
     let ch = null;
     let type = null;
     let note = null;

@@ -42,6 +42,7 @@ export const Sampler = {
     },
 
     play(note, velocity) {
+        // TODO: velocity curve
         const trackNum = note - 60;
         const t = this.tracks[trackNum];
         const bufSrc = this.ctx.createBufferSource();

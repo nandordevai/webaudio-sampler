@@ -74,7 +74,6 @@ function processCommand(event) {
     }
     sampler.setTrackParam(track, param, value);
     event.target.value = '';
-
 }
 
 loadSamples();
@@ -91,5 +90,6 @@ setInterval(() => {
     const bpm = clock.bpm();
     if (bpm !== Infinity) {
         $('.bpm').innerText = `${bpm < 100 ? ' ' : ''}${bpm} bpm`;
+        mixer.setDelayTime(clock.period * 6);
     }
 }, 1000);
