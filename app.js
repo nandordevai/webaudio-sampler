@@ -44,7 +44,8 @@ function onMidiMessage(event) {
 function processKeyboardInput(event) {
     if (event.target === $('.command__input')) {
         processCommand(event);
-    } else if (event.metaKey) {
+    } else if ((navigator.platform.startsWith('Mac') && event.metaKey)
+        || (navigator.platform.startsWith('Win') && event.ctrlKey)) {
         if (event.key === '.') selectNextInput();
     }
 }
