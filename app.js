@@ -8,7 +8,6 @@ import { Mixer } from './Mixer.js';
 import { MIDIClock } from './MIDIClock.js';
 import { MIDIMessage } from './MIDIMessage.js';
 
-const samples = ['Kick.wav', 'Snare.wav', 'Closedhat.wav', 'Clap.wav'];
 const ctx = new window.AudioContext();
 const mixer = Object.assign(Object.create(Mixer), { ctx });
 mixer.init();
@@ -18,8 +17,8 @@ const clock = Object.assign(Object.create(MIDIClock), { ctx });
 let inputs = null;
 let selectedInput = null;
 
-async function loadSamples() {
-    const urls = samples.map(_ => `./assets/samples/${_}`);
+async function loadSamples(files) {
+    const urls = files.map(_ => `./assets/samples/${_}`);
     for (const url of urls) {
         await sampler.loadSample(url);
     }
@@ -82,7 +81,22 @@ function processCommand(event) {
     event.target.value = '';
 }
 
-loadSamples();
+function onDragOver(event) {
+    event.preventDefault();
+}
+
+function onFileDrop(event) {
+    event.preventDefault();
+    const files = [];
+    for (const _ of event.dataTransfer.items) {
+        const file = _.getAsFile();
+        files.push(file.name);
+    }
+    loadSamples(files);
+    $('.sample__empty')?.remove();
+}
+
+// loadSamples();
 document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
 
 navigator.requestMIDIAccess()
@@ -99,3 +113,6 @@ setInterval(() => {
         mixer.setDelayTime(1 / bpm / 60 * 1000);
     }
 }, 100);
+
+document.body.addEventListener('drop', onFileDrop);
+document.body.addEventListener('dragover', onDragOver);
