@@ -1,5 +1,9 @@
 Basic sampler implemented with Electron & WebAudio API
 
+## Samples
+
+Drag and drop samples on window to load. There are no configurable parameters for the samples for now (ie. no pitch or length change etc.) Files are loaded with [`decodeAudioData()`](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData) so they will be resampled to the `AudioContext`'s sample rate (if different).
+
 ## Commands
 
 The format is `<track> <command> <value>` where `command` is one of:
@@ -16,7 +20,7 @@ Examples:
 - `2fhp` sets the filter on the third track to high pass
 - `3f3000` sets the filter frequency on track #3 to 3,000 Hz
 
-Sample list is fixed for now, can be rewritten in `app.js`. Parameters for delay and reverb are fixed too, might be configurable later.
+Parameters for delay and reverb are fixed, might be configurable later.
 
 ## MIDI
 
