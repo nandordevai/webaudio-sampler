@@ -7,6 +7,7 @@ export const Sampler = {
     noteNames: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
     ctx: null,
     mixer: null,
+    playingBufs: [],
 
     init() {
         this.noteGenerator = this.notes();
@@ -65,8 +66,10 @@ export const Sampler = {
         sendDelay.connect(this.mixer.delayBus);
 
         bufSrc.start(0);
+        this.playingBufs.push(bufSrc);
         t.setPlaying(true);
         bufSrc.addEventListener('ended', (_event) => {
+            this.playingBufs = this.playingBufs.filter(_ => _ !== bufSrc);
             t.setPlaying(false);
         });
     },
@@ -85,8 +88,19 @@ export const Sampler = {
         this.tracks[n].setParam(param, value);
     },
 
+    allNoteOff() {
+        // TODO: cut off delay
+        for (const _ of this.playingBufs) {
+            _.stop();
+        }
+    },
+
     handleCC(cc, val) {
-        const t = Math.floor((cc - 64) / this.tracks.length);
-        this.tracks[t].setFXFromCC(cc, val);
+        if (cc === 123 && val === 0) {
+            this.allNoteOff();
+        } else {
+            const t = Math.floor((cc - 64) / this.tracks.length);
+            this.tracks[t].setFXFromCC(cc, val);
+        }
     },
 };
