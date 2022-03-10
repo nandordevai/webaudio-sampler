@@ -9,18 +9,17 @@ import { MIDIClock } from './MIDIClock.js';
 import { MIDIMessage } from './MIDIMessage.js';
 
 const ctx = new window.AudioContext();
-const mixer = Object.assign(Object.create(Mixer), { ctx });
+const mixer = {...Mixer, ctx};
 mixer.init();
-const sampler = Object.assign(Object.create(Sampler), { ctx, mixer, });
+const sampler = {...Sampler, ctx, mixer};
 sampler.init();
-const clock = Object.assign(Object.create(MIDIClock), { ctx });
+const clock = {...MIDIClock, ctx };
 let inputs = null;
 let selectedInput = null;
 
 async function loadSamples(files) {
-    const urls = files.map(_ => `./assets/samples/${_}`);
-    for (const url of urls) {
-        await sampler.loadSample(url);
+    for (const _ of files) {
+        await sampler.loadSample(_);
     }
 }
 
@@ -90,13 +89,12 @@ function onFileDrop(event) {
     const files = [];
     for (const _ of event.dataTransfer.items) {
         const file = _.getAsFile();
-        files.push(file.name);
+        files.push(file.path);
     }
     loadSamples(files);
     $('.sample__empty')?.remove();
 }
 
-// loadSamples();
 document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
 
 navigator.requestMIDIAccess()

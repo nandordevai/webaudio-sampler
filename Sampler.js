@@ -26,14 +26,14 @@ export const Sampler = {
 
     addTrack(name, buffer) {
         const [octave, note] = this.noteGenerator.next().value;
-        const track = Object.assign(Object.create(Track), {
+        const track = {...Track,
             num: this.tracks.length,
             octave,
             note,
             name,
             midiCh: this.midiCh,
             buffer
-        });
+        };
         track.init();
         $('.sample__list').appendChild(track.render());
         track.setFX('delay');
