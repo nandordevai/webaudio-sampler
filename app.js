@@ -20,6 +20,7 @@ let selectedInput = null;
 async function loadSamples(files) {
     for (const _ of files) {
         await sampler.loadSample(_);
+        localStorage.samples = JSON.stringify(JSON.parse(localStorage.samples).concat([_]));
     }
 }
 
@@ -114,3 +115,13 @@ setInterval(() => {
 
 document.body.addEventListener('drop', onFileDrop);
 document.body.addEventListener('dragover', onDragOver);
+
+if (typeof localStorage.samples === 'undefined') localStorage.samples = JSON.stringify([]);
+
+console.log(localStorage.samples);
+const files = JSON.parse(localStorage.samples);
+if (files.length > 0) {
+    localStorage.samples = JSON.stringify([]);
+    loadSamples(files);
+    $('.sample__empty')?.remove();
+}

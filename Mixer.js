@@ -7,15 +7,24 @@ export const Mixer = {
 
     init() {
         const out = this.ctx.destination;
+
+        const comp = this.ctx.createDynamicsCompressor();
+        comp.threshold.setValueAtTime(-50, this.ctx.currentTime);
+        comp.knee.setValueAtTime(40, this.ctx.currentTime);
+        comp.ratio.setValueAtTime(12, this.ctx.currentTime);
+        comp.attack.setValueAtTime(0, this.ctx.currentTime);
+        comp.release.setValueAtTime(0.25, this.ctx.currentTime);
+        comp.connect(out);
+
         this.master = this.ctx.createGain();
-        this.master.connect(out);
+        this.master.connect(comp);
 
         this.delay = this.ctx.createDelay(1.0);
         const feedback = this.ctx.createGain();
         feedback.gain.value = .2;
         this.delay.connect(feedback);
         feedback.connect(this.delay);
-        this.delay.connect(out);
+        this.delay.connect(this.master);
         this.delay.delayTime.value = .125;
         this.delayBus = this.ctx.createGain();
         this.delayBus.connect(this.delay);

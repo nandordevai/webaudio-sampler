@@ -13,6 +13,7 @@ export const Track = {
     octave: null,
     note: null,
     name: null,
+    path: null,
     midiCh: null,
     delay: 0.0,
     reverb: 0.0,
@@ -50,6 +51,7 @@ export const Track = {
                     <svg class="sample__filter-vis"
                     width="${fxWidth}" height="${fxHeight}"></svg>
                 </span>
+                <span class="sample__remove">rem</span>
             </div>
         `);
         return this.el;

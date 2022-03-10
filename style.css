@@ -83,6 +83,9 @@ body {
   border-right: 1px solid var(--ui-light-tertiary);
   border-left: 1px solid var(--ui-light-tertiary);
 }
+.sample__remove {
+  cursor: pointer;
+}
 
 .samples__header {
   border-bottom: 1px solid var(--ui-light);

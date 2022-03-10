@@ -96,6 +96,10 @@ body {
         border-right: 1px solid var(--ui-light-tertiary);
         border-left: 1px solid var(--ui-light-tertiary);
     }
+
+    &__remove {
+        cursor: pointer;
+    }
 }
 
 .samples {
