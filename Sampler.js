@@ -26,7 +26,7 @@ export const Sampler = {
 
     addTrack(path, name, buffer) {
         const [octave, note] = this.noteGenerator.next().value;
-        const track = {...Track,
+        const track = {...Track(),
             num: this.tracks.length,
             octave,
             note,
@@ -35,10 +35,6 @@ export const Sampler = {
             midiCh: this.midiCh,
             buffer
         };
-        track.init();
-        const el = track.render();
-        $('.sample__list').appendChild(el);
-        el.querySelector('.sample__remove').addEventListener('click', () => { this.removeTrack(track); });
         track.setFX('delay');
         track.setFX('reverb');
         track.setFX('gain');
@@ -49,12 +45,6 @@ export const Sampler = {
 
     removeTrack(track) {
         this.tracks.splice(track.num, 1);
-        for (let [i, _] of this.tracks.entries()) {
-            _.num = i;
-            _.el.querySelector('.sample__num').innerText = i;
-        }
-        track.el.remove();
-        localStorage.samples = JSON.stringify(this.tracks.map(_ => _.path));
     },
 
     play(note, velocity) {
@@ -94,15 +84,13 @@ export const Sampler = {
     },
 
     async loadSample(path) {
-        let track = null;
         await fetch(path)
             .then(res => res.arrayBuffer())
             .then(aBuf => this.ctx.decodeAudioData(aBuf))
             .then((buffer) => {
                 const name = path.split('/').slice(-1)[0].split('.')[0];
-                track = this.addTrack(path, name, buffer);
+                this.addTrack(path, name, buffer);
             });
-        return track.note;
     },
 
     setTrackParam(n, param, value) {
