@@ -93,7 +93,7 @@ function onFileDrop(event) {
         files.push(file.path);
     }
     loadSamples(files);
-    $('.sample__empty')?.remove();
+    $('.track__empty')?.remove();
 }
 
 document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
@@ -118,10 +118,9 @@ document.body.addEventListener('dragover', onDragOver);
 
 if (typeof localStorage.samples === 'undefined') localStorage.samples = JSON.stringify([]);
 
-console.log(localStorage.samples);
 const files = JSON.parse(localStorage.samples);
 if (files.length > 0) {
     localStorage.samples = JSON.stringify([]);
     loadSamples(files);
-    $('.sample__empty')?.remove();
+    $('.track__empty')?.remove();
 }

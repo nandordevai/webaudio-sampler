@@ -1,5 +1,6 @@
 import { $ } from './lib.js';
 import { Track } from './Track.js';
+import { SamplerView } from './SamplerView.js';
 
 export const Sampler = {
     tracks: [],
@@ -11,6 +12,8 @@ export const Sampler = {
 
     init() {
         this.noteGenerator = this.notes();
+        this.view = SamplerView;
+        this.view.render();
     },
 
     *notes() {
@@ -26,8 +29,7 @@ export const Sampler = {
 
     addTrack(path, name, buffer) {
         const [octave, note] = this.noteGenerator.next().value;
-        const track = {...Track(),
-            num: this.tracks.length,
+        const track = {...Track(this.tracks.length),
             octave,
             note,
             path,
@@ -35,6 +37,7 @@ export const Sampler = {
             midiCh: this.midiCh,
             buffer
         };
+        track.view.render(this.view.el.querySelector('.track__list'), track);
         track.setFX('delay');
         track.setFX('reverb');
         track.setFX('gain');
@@ -45,6 +48,10 @@ export const Sampler = {
 
     removeTrack(track) {
         this.tracks.splice(track.num, 1);
+        this.view.removeTrack(track.num);
+        for (let [i, _] of this.tracks.entries()) {
+            _.num = i;
+        }
     },
 
     play(note, velocity) {

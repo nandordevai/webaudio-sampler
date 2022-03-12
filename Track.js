@@ -1,4 +1,5 @@
 import { clamp } from './lib.js';
+import { TrackView } from './TrackView.js';
 
 const fTypes = {
     lp: 'lowpass',
@@ -6,7 +7,8 @@ const fTypes = {
     bp: 'bandpass',
 };
 
-export const Track = () => ({
+export const Track = (num) => ({
+    num,
     octave: null,
     note: null,
     name: null,
@@ -21,6 +23,7 @@ export const Track = () => ({
         freq: 20000,
         type: 'lowpass',
     },
+    view: {...TrackView},
 
     setFX(fx, val = null) {
         if (val !== null) {
@@ -28,6 +31,7 @@ export const Track = () => ({
         } else {
             val = this[fx];
         }
+        this.view.setFX(fx, val);
     },
 
     setFilter(freq = null, type = null) {

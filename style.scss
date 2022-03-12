@@ -1,4 +1,6 @@
 :root {
+    --fx-width-raw: 48;
+    --fx-width: calc(var(--fx-width-raw) * 1px);
     --ui-dark: hsla(0, 0%, 10%, 1);
     --ui-light: hsla(0, 0%, 90%, 1);
     --ui-light-secondary: hsla(0, 0%, 60%, 1);
@@ -20,7 +22,7 @@ body {
     font-family: "Input Mono";
     font-size: 14px;
     margin: 20px;
-    width: 400px;
+    width: 500px;
 }
 
 .command {
@@ -43,7 +45,7 @@ body {
     width: 100%;
 }
 
-.sample {
+.track {
     column-gap: 10px;
     display: flex;
     flex-direction: row;
@@ -51,29 +53,31 @@ body {
 
     &__bang,
     &__channel,
+    &__num,
     &__octave {
         width: 10px;
     }
 
-    &__bang {
-        color: var(--ui-dark);
+    &__note {
+        width: 20px;
     }
 
-    &__bang--active {
-        color: var(--ui-light);
+    &__bang {
+        color: var(--ui-dark);
+
+        &--active {
+            color: var(--ui-light);
+        }
     }
 
     &__delay,
-    &__reverb {
-        width: 40px;
+    &__reverb,
+    &__gain {
+        width: var(--fx-width);
     }
 
     &__file {
         width: 100px;
-    }
-
-    &__note {
-        width: 20px;
     }
 
     &__send {
@@ -81,13 +85,13 @@ body {
         display: inline-block;
         height: 10px;
         margin-top: 3px;
-        width: 40px;
+        width: var(--fx-width);
     }
 
     &__filter {
         display: inline-block;
         height: 10px;
-        width: 40px;
+        width: var(--fx-width);
     }
 
     &__filter-vis {
@@ -99,10 +103,11 @@ body {
 
     &__remove {
         cursor: pointer;
+        width: calc(var(--fx-width) * 1px);
     }
 }
 
-.samples {
+.tracks {
     &__header {
         border-bottom: 1px solid var(--ui-light);
         color: var(--ui-light-secondary);

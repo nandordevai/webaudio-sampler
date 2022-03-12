@@ -1,41 +1,43 @@
-const fxWidth = 37;
+const fxWidth = getComputedStyle(document.documentElement).getPropertyValue('--fx-width-raw');
 const fxHeight = 10;
 
 export const TrackView = {
-    num: null,
     el: null,
 
-    createEl(html) {
-        const t = document.createElement('template');
-        t.innerHTML = html;
-        return t.content.firstElementChild.cloneNode(true);
+    startPlaying() {
+        this.el.querySelector('.track__bang').classList.add('track__bang--active');
     },
 
-    render() {
-        this.el = this.createEl(`
-            <div class="sample">
-                <span class="sample__num">${this.num}</span>
-                <span class="sample__bang">*</span>
-                <span class="sample__channel">${this.midiCh}</span>
-                <span class="sample__octave">${this.octave}</span>
-                <span class="sample__note">${this.note}</span>
-                <span class="sample__file">${this.name}</span>
-                <span class="sample__delay sample__send"></span>
-                <span class="sample__reverb sample__send"></span>
-                <span class="sample__gain sample__send"></span>
-                <span class="sample__filter">
-                    <svg class="sample__filter-vis"
+    stopPlaying() {
+        this.el.querySelector('.track__bang').classList.remove('track__bang--active');
+    },
+
+    render(target, track) {
+        const t = document.createElement('template');
+        t.innerHTML = `
+            <div class="track">
+                <span class="track__num">${track.num}</span>
+                <span class="track__bang">*</span>
+                <span class="track__channel">${track.midiCh}</span>
+                <span class="track__octave">${track.octave}</span>
+                <span class="track__note">${track.note}</span>
+                <span class="track__file">${track.name}</span>
+                <span class="track__delay track__send"></span>
+                <span class="track__reverb track__send"></span>
+                <span class="track__gain track__send"></span>
+                <span class="track__filter">
+                    <svg class="track__filter-vis"
                     width="${fxWidth}" height="${fxHeight}"></svg>
                 </span>
-                <span class="sample__remove">rem</span>
+                <span class="track__remove">rem</span>
             </div>
-        `);
-        return this.el;
+        `;
+        this.el = t.content.firstElementChild.cloneNode(true);
+        target.appendChild(this.el);
     },
 
     setFX(fx, val = null) {
-        const el = this.el.querySelector(`.sample__${fx}`);
-        this.updateFXUI(el, val);
+        const el = this.el.querySelector(`.track__${fx}`);
         el.style.background = `
             linear-gradient(to right, var(--ui-light) 0%,
                 var(--ui-light) ${val * 100}%,
@@ -62,8 +64,8 @@ export const TrackView = {
     },
 
     setPlaying(status) {
-        const el = this.el.querySelector('.sample__bang');
-        const c = 'sample__bang--active';
+        const el = this.el.querySelector('.track__bang');
+        const c = 'track__bang--active';
         if (status) {
             el.classList.add(c);
         } else {

@@ -1,4 +1,6 @@
 :root {
+  --fx-width-raw: 48;
+  --fx-width: calc(var(--fx-width-raw) * 1px);
   --ui-dark: hsla(0, 0%, 10%, 1);
   --ui-light: hsla(0, 0%, 90%, 1);
   --ui-light-secondary: hsla(0, 0%, 60%, 1);
@@ -19,7 +21,7 @@ body {
   font-family: "Input Mono";
   font-size: 14px;
   margin: 20px;
-  width: 400px;
+  width: 500px;
 }
 
 .command {
@@ -41,59 +43,60 @@ body {
   width: 100%;
 }
 
-.sample {
+.track {
   -moz-column-gap: 10px;
        column-gap: 10px;
   display: flex;
   flex-direction: row;
   height: 18px;
 }
-.sample__bang, .sample__channel, .sample__octave {
+.track__bang, .track__channel, .track__num, .track__octave {
   width: 10px;
 }
-.sample__bang {
-  color: var(--ui-dark);
-}
-.sample__bang--active {
-  color: var(--ui-light);
-}
-.sample__delay, .sample__reverb {
-  width: 40px;
-}
-.sample__file {
-  width: 100px;
-}
-.sample__note {
+.track__note {
   width: 20px;
 }
-.sample__send {
+.track__bang {
+  color: var(--ui-dark);
+}
+.track__bang--active {
+  color: var(--ui-light);
+}
+.track__delay, .track__reverb, .track__gain {
+  width: var(--fx-width);
+}
+.track__file {
+  width: 100px;
+}
+.track__send {
   border: 1px solid var(--ui-light);
   display: inline-block;
   height: 10px;
   margin-top: 3px;
-  width: 40px;
+  width: var(--fx-width);
 }
-.sample__filter {
+.track__filter {
   display: inline-block;
   height: 10px;
-  width: 40px;
+  width: var(--fx-width);
 }
-.sample__filter-vis {
+.track__filter-vis {
   background: var(--ui-dark);
   border-right: 1px solid var(--ui-light-tertiary);
   border-left: 1px solid var(--ui-light-tertiary);
 }
-.sample__remove {
+.track__remove {
   cursor: pointer;
+  width: calc(var(--fx-width) * 1px);
 }
 
-.samples__header {
+.tracks__header {
   border-bottom: 1px solid var(--ui-light);
   color: var(--ui-light-secondary);
   height: 22px;
   margin-bottom: 6px;
 }
-.samples__header * {
+.tracks__header * {
   color: var(--ui-light-secondary);
 }
 
