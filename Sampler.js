@@ -9,6 +9,7 @@ export const Sampler = {
     ctx: null,
     mixer: null,
     playingBufs: [],
+    bpm: null,
 
     init() {
         this.noteGenerator = this.notes();
@@ -43,6 +44,7 @@ export const Sampler = {
         track.setFX('gain');
         track.setFilter();
         this.tracks.push(track);
+        this.view.removeEmpty();
         return track;
     },
 
@@ -118,5 +120,10 @@ export const Sampler = {
             const t = Math.floor((cc - 64) / this.tracks.length);
             this.tracks[t].setFXFromCC(cc, val);
         }
+    },
+
+    setBPM(value) {
+        this.view.bpm = value;
+        this.mixer.delayTime = 1 / value / 60 * 1000;
     },
 };

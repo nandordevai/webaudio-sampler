@@ -30,7 +30,7 @@ export const SamplerView = {
                     <input type="text" class="command__input">
                 </div>
 
-                <div class="bpm">––– bpm</div>
+                <div class="bpm"><span class="bpm__value">–––</span> bpm</div>
                 <div class="midi"></div>
                 <div class="log"></div>
             </div>
@@ -40,6 +40,14 @@ export const SamplerView = {
     },
 
     removeTrack(num) {
-        //
+        // TODO
+    },
+
+    set bpm(value) {
+        this.el.querySelector('.bpm__value').innerText = `${value < 100 ? ' ' : ''}${value}`;
+    },
+
+    removeEmpty() {
+        this.el.querySelector('.track__empty')?.remove();
     },
 };

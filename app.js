@@ -90,7 +90,6 @@ function onFileDrop(event) {
         files.push(file.path);
     }
     loadSamples(files);
-    $('.track__empty')?.remove();
 }
 
 document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
@@ -105,8 +104,7 @@ navigator.requestMIDIAccess()
 setInterval(() => {
     const bpm = clock.bpm();
     if (bpm !== Infinity) {
-        $('.bpm').innerText = `${bpm < 100 ? ' ' : ''}${bpm} bpm`;
-        mixer.setDelayTime(1 / bpm / 60 * 1000);
+        sampler.setBPM(bpm);
     }
 }, 100);
 
@@ -119,5 +117,4 @@ const files = JSON.parse(localStorage.samples);
 if (files.length > 0) {
     localStorage.samples = JSON.stringify([]);
     loadSamples(files);
-    $('.track__empty')?.remove();
 }

@@ -35,7 +35,7 @@ export const Mixer = {
         this.reverb.connect(this.master);
     },
 
-    setDelayTime(t) {
+    set delayTime(t) {
         this.delay.delayTime.setValueAtTime(t, this.ctx.currentTime);
     },
 };

@@ -8,7 +8,7 @@ try {
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 500,
+        width: 540,
         height: 400,
         frame: false,
     });
