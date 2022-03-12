@@ -37,6 +37,7 @@ export const Track = (num) => ({
     setFilter(freq = null, type = null) {
         if (freq !== null) this.filter.freq = clamp(freq, 20, 20000);
         if (type !== null) this.filter.type = fTypes[type];
+        this.view.updateFilterUI(this.filter);
     },
 
     setFXFromCC(cc, val) {
@@ -49,6 +50,9 @@ export const Track = (num) => ({
         const fx = ['delay', 'reverb', 'gain', 'filter'];
         const cfx = fx.find(_ => _[0] === param.toLowerCase());
         if (cfx === 'filter') {
+            if (val.slice(-1).toLowerCase() === 'k') {
+                val = parseFloat(val.slice(0, -1)) * 1000;
+            }
             if (['lp', 'hp', 'bp'].includes(val)) {
                 this.setFilter(null, val);
             } else {

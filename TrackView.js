@@ -45,7 +45,7 @@ export const TrackView = {
         `;
     },
 
-    updateFilterUI() {
+    updateFilterUI(filter) {
         const oldEl = this.el.querySelector('.filter-curve');
         if (oldEl !== null) this.el.querySelector('svg').removeChild(oldEl);
         const ns = 'http://www.w3.org/2000/svg';
@@ -56,8 +56,8 @@ export const TrackView = {
             bandpass: (f) => `M ${f} 1 Q ${f + 5} 1 ${f + 5} 10 M ${f} 1 Q ${f - 5} 1 ${f - 5} 10`,
         };
         // log scale magic formula
-        const f = ((fxWidth - 1 + 10) / 4.4) * Math.log10(this.filter.freq) - 10;
-        const curve = curves[this.filter.type](f);
+        const f = ((fxWidth - 1 + 10) / 4.4) * Math.log10(filter.freq) - 10;
+        const curve = curves[filter.type](f);
         path.setAttribute('d', curve);
         path.setAttribute('class', 'filter-curve');
         this.el.querySelector('svg').appendChild(path);

@@ -69,10 +69,7 @@ function processCommand(event) {
     if (cmd === '') return;
     const track = cmd[0];
     const param = cmd[1];
-    let value = parseFloat(cmd.slice(2));
-    if (isNaN(value)) {
-        value = cmd.slice(2);
-    }
+    let value = cmd.slice(2);
     try {
         sampler.setTrackParam(track, param, value);
     } catch (TypeError) {
