@@ -9,11 +9,11 @@ import { MIDIClock } from './MIDIClock.js';
 import { MIDIMessage } from './MIDIMessage.js';
 
 const ctx = new window.AudioContext();
-const mixer = {...Mixer, ctx};
+const mixer = Object.assign(Object.create(Mixer), { ctx });
 mixer.init();
-const sampler = {...Sampler, ctx, mixer};
+const sampler = Object.assign(Object.create(Sampler), { ctx, mixer });
 sampler.init();
-const clock = {...MIDIClock, ctx };
+const clock = Object.assign(Object.create(MIDIClock), { ctx });
 let inputs = null;
 let selectedInput = null;
 

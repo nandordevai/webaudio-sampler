@@ -9,7 +9,6 @@ export const Sampler = {
     ctx: null,
     mixer: null,
     playingBufs: [],
-    bpm: null,
 
     init() {
         this.noteGenerator = this.notes();
@@ -30,14 +29,14 @@ export const Sampler = {
 
     addTrack(path, name, buffer) {
         const [octave, note] = this.noteGenerator.next().value;
-        const track = {...Track(this.tracks.length),
+        const track = Object.assign(Object.create(Track(this.tracks.length)), {
             octave,
             note,
             path,
             name,
             midiCh: this.midiCh,
             buffer
-        };
+        });
         track.view.render(this.view.el.querySelector('.track__list'), track);
         track.setFX('delay');
         track.setFX('reverb');
