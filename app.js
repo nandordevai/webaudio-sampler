@@ -115,6 +115,13 @@ if (typeof localStorage.samples === 'undefined') localStorage.samples = JSON.str
 
 const files = JSON.parse(localStorage.samples);
 if (files.length > 0) {
+    localStorage._samples = localStorage.samples;
     localStorage.samples = JSON.stringify([]);
-    loadSamples(files);
+    try {
+        loadSamples(files);
+    } catch (error) {
+        sampler.onLoadError();
+        localStorage.samples = localStorage._samples;
+        localStorage.removeItem('_samples');
+    }
 }
