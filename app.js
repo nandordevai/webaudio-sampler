@@ -104,7 +104,7 @@ navigator.requestMIDIAccess()
 setInterval(() => {
     const bpm = clock.bpm();
     if (bpm !== Infinity) {
-        sampler.setBPM(bpm);
+        sampler.bpm = bpm;
     }
 }, 100);
 

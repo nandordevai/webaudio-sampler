@@ -84,10 +84,10 @@ export const Sampler = {
 
         bufSrc.start(0);
         this.playingBufs.push(bufSrc);
-        t.setPlaying(true);
+        t.playing = true;
         bufSrc.addEventListener('ended', (_event) => {
             this.playingBufs = this.playingBufs.filter(_ => _ !== bufSrc);
-            t.setPlaying(false);
+            t.playing = false;
         });
     },
 
@@ -121,8 +121,12 @@ export const Sampler = {
         }
     },
 
-    setBPM(value) {
+    set bpm(value) {
         this.view.bpm = value;
         this.mixer.delayTime = 1 / value / 60 * 1000;
     },
+
+    onLoadError() {
+        // TODO
+    }
 };

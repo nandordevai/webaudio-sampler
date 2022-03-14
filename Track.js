@@ -62,4 +62,8 @@ export const Track = (num) => ({
             this.setFX(cfx, val);
         }
     },
+
+    set playing(value) {
+        this.view.bang(value);
+    },
 });

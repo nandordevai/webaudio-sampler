@@ -63,7 +63,7 @@ export const TrackView = {
         this.el.querySelector('svg').appendChild(path);
     },
 
-    setPlaying(status) {
+    bang(status) {
         const el = this.el.querySelector('.track__bang');
         const c = 'track__bang--active';
         if (status) {
