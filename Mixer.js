@@ -8,16 +8,17 @@ export const Mixer = {
     init() {
         const out = this.ctx.destination;
 
-        const comp = this.ctx.createDynamicsCompressor();
-        comp.threshold.setValueAtTime(-50, this.ctx.currentTime);
-        comp.knee.setValueAtTime(40, this.ctx.currentTime);
-        comp.ratio.setValueAtTime(12, this.ctx.currentTime);
-        comp.attack.setValueAtTime(0, this.ctx.currentTime);
-        comp.release.setValueAtTime(0.25, this.ctx.currentTime);
-        comp.connect(out);
+        // const comp = this.ctx.createDynamicsCompressor();
+        // comp.threshold.setValueAtTime(-50, this.ctx.currentTime);
+        // comp.knee.setValueAtTime(40, this.ctx.currentTime);
+        // comp.ratio.setValueAtTime(12, this.ctx.currentTime);
+        // comp.attack.setValueAtTime(0, this.ctx.currentTime);
+        // comp.release.setValueAtTime(0.25, this.ctx.currentTime);
+        // comp.connect(out);
 
         this.master = this.ctx.createGain();
-        this.master.connect(comp);
+        // this.master.connect(comp);
+        this.master.connect(out);
 
         this.delay = this.ctx.createDelay(1.0);
         const feedback = this.ctx.createGain();
@@ -31,8 +32,16 @@ export const Mixer = {
 
         this.reverbBus = this.ctx.createGain();
         this.reverb = Reverb(this.ctx);
+        const reverbLP = this.ctx.createBiquadFilter();
+        reverbLP.type = 'lowpass';
+        reverbLP.frequency.setValueAtTime(6000, this.ctx.currentTime);
+        const reverbHP = this.ctx.createBiquadFilter();
+        reverbHP.type = 'highpass';
+        reverbHP.frequency.setValueAtTime(300, this.ctx.currentTime);
         this.reverbBus.connect(this.reverb);
-        this.reverb.connect(this.master);
+        this.reverb.connect(reverbLP);
+        reverbLP.connect(reverbHP);
+        reverbHP.connect(this.master);
     },
 
     set delayTime(t) {
