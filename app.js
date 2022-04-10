@@ -34,11 +34,16 @@ function onMidiMessage(event) {
 }
 
 function processKeyboardInput(event) {
-    if (event.target === $('.command__input')) {
-        processCommand(event);
-    } else if ((navigator.platform.startsWith('Mac') && event.metaKey)
+    if ((navigator.platform.startsWith('Mac') && event.metaKey)
         || (navigator.platform.startsWith('Win') && event.ctrlKey)) {
-        if (event.key === '.') selectNextInput();
+        if (event.code === 'Period') selectNextInput();
+        else if (event.code === 'KeyS') {
+            WebaudioSampler.saveKit(localStorage.tracks);
+        } else if (event.code === 'KeyO') {
+            WebaudioSampler.loadKit();
+        }
+    } else if (event.target === $('.command__input')) {
+        processCommand(event);
     }
 }
 
@@ -90,8 +95,6 @@ function onFileDrop(event) {
     }
 }
 
-document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
-
 navigator.requestMIDIAccess()
     .then((access) => {
         inputs = Array.from(access.inputs.values());
@@ -108,7 +111,13 @@ setInterval(() => {
 
 document.body.addEventListener('drop', onFileDrop);
 document.body.addEventListener('dragover', onDragOver);
+document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
 
 if (typeof localStorage.tracks === 'undefined') localStorage.tracks = JSON.stringify([]);
 
 sampler.loadSaved();
+
+WebaudioSampler.onKitLoad((data) => {
+    localStorage.tracks = data;
+    sampler.loadSaved();
+});

@@ -44,7 +44,13 @@ export const Sampler = {
         track.setFilter();
         this.tracks.push(track);
         this.view.removeEmpty();
+        this.save();
         return track;
+    },
+
+    removeAll() {
+        this.tracks = [];
+        this.view.removeAll();
     },
 
     removeTrack(n) {
@@ -53,6 +59,7 @@ export const Sampler = {
         for (let [i, _] of this.tracks.entries()) {
             _.num = i;
         }
+        for (const _ of this.tracks) _.updateNumber();
         this.save();
     },
 
@@ -148,6 +155,7 @@ export const Sampler = {
     },
 
     async loadSaved() {
+        this.removeAll();
         const tracks = JSON.parse(localStorage.tracks);
         if (tracks.length === 0) return;
         try {
@@ -160,7 +168,6 @@ export const Sampler = {
                                 this.setTrackParam(i, p, f);
                             }
                         } else {
-                            // console.log(i, p, _[p])
                             this.setTrackParam(i, p, _[p]);
                         }
                     }

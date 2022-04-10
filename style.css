@@ -18,6 +18,7 @@
 }
 
 body {
+  -webkit-app-region: drag;
   background: var(--ui-dark);
   color: var(--ui-light);
   font-family: "Input Mono";
@@ -126,5 +127,9 @@ body {
 .bpm {
   margin: 6px 0;
   white-space: pre;
+}
+
+.hidden {
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */

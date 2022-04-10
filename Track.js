@@ -59,4 +59,8 @@ export const Track = (num) => ({
     set playing(value) {
         this.view.bang(value);
     },
+
+    updateNumber() {
+        this.view.setNumber(this.num);
+    },
 });

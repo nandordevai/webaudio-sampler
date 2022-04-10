@@ -62,6 +62,10 @@ export const TrackView = {
         this.el.querySelector('svg').appendChild(path);
     },
 
+    setNumber(n) {
+        this.el.querySelector('.track__num').innerHTML = n;
+    },
+
     bang(status) {
         const el = this.el.querySelector('.track__bang');
         const c = 'track__bang--active';

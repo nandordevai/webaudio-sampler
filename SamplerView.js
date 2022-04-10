@@ -42,6 +42,10 @@ export const SamplerView = {
         this.el.querySelectorAll('.track__list .track')[num].remove();
     },
 
+    removeAll() {
+        this.el.querySelector('.track__list').innerHTML = '';
+    },
+
     set bpm(value) {
         this.el.querySelector('.bpm__value').innerText = `${value < 100 ? ' ' : ''}${value}`;
     },
