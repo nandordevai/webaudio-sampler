@@ -11,8 +11,10 @@
   font-family: "Input Mono";
   src: url(./input_mono_regular.ttf);
 }
+
 * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 body {
@@ -27,6 +29,7 @@ body {
 .command {
   margin: 10px 0;
 }
+
 .command__input {
   background: var(--ui-dark);
   border: 1px solid var(--ui-light);
@@ -44,30 +47,45 @@ body {
 }
 
 .track {
-  -moz-column-gap: 10px;
-       column-gap: 10px;
+  -webkit-column-gap: 10px;
+          column-gap: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
   height: 18px;
 }
+
 .track__bang, .track__channel, .track__num, .track__octave {
   width: 10px;
 }
+
 .track__note {
   width: 20px;
 }
+
 .track__bang {
   color: var(--ui-dark);
 }
+
 .track__bang--active {
   color: var(--ui-light);
 }
+
 .track__delay, .track__reverb, .track__gain {
   width: var(--fx-width);
 }
+
 .track__file {
-  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 150px;
+  white-space: nowrap;
 }
+
 .track__send {
   border: 1px solid var(--ui-light);
   display: inline-block;
@@ -75,19 +93,17 @@ body {
   margin-top: 3px;
   width: var(--fx-width);
 }
+
 .track__filter {
   display: inline-block;
   height: 10px;
   width: var(--fx-width);
 }
+
 .track__filter-vis {
   background: var(--ui-dark);
   border-right: 1px solid var(--ui-light-tertiary);
   border-left: 1px solid var(--ui-light-tertiary);
-}
-.track__remove {
-  cursor: pointer;
-  width: calc(var(--fx-width) * 1px);
 }
 
 .tracks__header {
@@ -96,6 +112,7 @@ body {
   height: 22px;
   margin-bottom: 6px;
 }
+
 .tracks__header * {
   color: var(--ui-light-secondary);
 }
@@ -109,4 +126,5 @@ body {
 .bpm {
   margin: 6px 0;
   white-space: pre;
-}/*# sourceMappingURL=style.css.map */
+}
+/*# sourceMappingURL=style.css.map */

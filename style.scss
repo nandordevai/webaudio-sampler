@@ -77,7 +77,10 @@ body {
     }
 
     &__file {
-        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 150px;
+        white-space: nowrap;
     }
 
     &__send {
@@ -96,14 +99,8 @@ body {
 
     &__filter-vis {
         background: var(--ui-dark);
-        // border-bottom: 1px solid var(--ui-light-tertiary);
         border-right: 1px solid var(--ui-light-tertiary);
         border-left: 1px solid var(--ui-light-tertiary);
-    }
-
-    &__remove {
-        cursor: pointer;
-        width: calc(var(--fx-width) * 1px);
     }
 }
 

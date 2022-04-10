@@ -17,13 +17,6 @@ const clock = Object.assign(Object.create(MIDIClock), { ctx });
 let inputs = null;
 let selectedInput = null;
 
-async function loadSamples(files) {
-    for (const _ of files) {
-        await sampler.loadSample(_);
-        localStorage.samples = JSON.stringify(JSON.parse(localStorage.samples).concat([_]));
-    }
-}
-
 function onMidiMessage(event) {
     const msg = MIDIMessage(event);
     if (msg.type === 'clock') {
@@ -69,11 +62,18 @@ function processCommand(event) {
     if (cmd === '') return;
     const track = cmd[0];
     const param = cmd[1];
-    let value = cmd.slice(2);
-    try {
-        sampler.setTrackParam(track, param, value);
-    } catch (TypeError) {
-        // ignore bad command
+    if (param.toLowerCase() === 'x') {
+        sampler.removeTrack(track);
+    } else {
+        let value = cmd.slice(2);
+        try {
+            sampler.setTrackParam(track, param, value);
+            const trackData = JSON.parse(localStorage.tracks);
+            trackData[track][param] = value;
+            localStorage.tracks = JSON.stringify(trackData);
+        } catch (TypeError) {
+            // ignore bad command
+        }
     }
     event.target.value = '';
 }
@@ -84,12 +84,10 @@ function onDragOver(event) {
 
 function onFileDrop(event) {
     event.preventDefault();
-    const files = [];
     for (const _ of event.dataTransfer.items) {
         const file = _.getAsFile();
-        files.push(file.path);
+        sampler.loadSample(file.path);
     }
-    loadSamples(files);
 }
 
 document.body.addEventListener('keydown', (event) => { processKeyboardInput(event); });
@@ -111,17 +109,6 @@ setInterval(() => {
 document.body.addEventListener('drop', onFileDrop);
 document.body.addEventListener('dragover', onDragOver);
 
-if (typeof localStorage.samples === 'undefined') localStorage.samples = JSON.stringify([]);
+if (typeof localStorage.tracks === 'undefined') localStorage.tracks = JSON.stringify([]);
 
-const files = JSON.parse(localStorage.samples);
-if (files.length > 0) {
-    localStorage._samples = localStorage.samples;
-    localStorage.samples = JSON.stringify([]);
-    try {
-        loadSamples(files);
-    } catch (error) {
-        sampler.onLoadError();
-        localStorage.samples = localStorage._samples;
-        localStorage.removeItem('_samples');
-    }
-}
+sampler.loadSaved();

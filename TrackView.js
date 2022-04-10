@@ -29,7 +29,6 @@ export const TrackView = {
                     <svg class="track__filter-vis"
                     width="${fxWidth}" height="${fxHeight}"></svg>
                 </span>
-                <span class="track__remove">rem</span>
             </div>
         `;
         this.el = t.content.firstElementChild.cloneNode(true);
@@ -51,9 +50,9 @@ export const TrackView = {
         const ns = 'http://www.w3.org/2000/svg';
         const path = document.createElementNS(ns, 'path');
         const curves = {
-            lowpass: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
-            highpass: (f) => `M ${fxWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
-            bandpass: (f) => `M ${f} 1 Q ${f + 5} 1 ${f + 5} 10 M ${f} 1 Q ${f - 5} 1 ${f - 5} 10`,
+            lp: (f) => `M 0 1 L ${f - 5} 1 Q ${f} 1 ${f} 10`,
+            hp: (f) => `M ${fxWidth} 1 L ${f + 5} 1 Q ${f} 1 ${f} 10`,
+            bp: (f) => `M ${f} 1 Q ${f + 5} 1 ${f + 5} 10 M ${f} 1 Q ${f - 5} 1 ${f - 5} 10`,
         };
         // log scale magic formula
         const f = ((fxWidth - 1 + 10) / 4.4) * Math.log10(filter.freq) - 10;

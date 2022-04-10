@@ -18,7 +18,6 @@ export const SamplerView = {
                             <span class="track__reverb">rev</span>
                             <span class="track__gain">gain</span>
                             <span class="track__filter">filt</span>
-                            <span class="track__remove">rem</span>
                         </div>
                     </div>
                     <div class="track__list">
@@ -40,7 +39,7 @@ export const SamplerView = {
     },
 
     removeTrack(num) {
-        // TODO
+        this.el.querySelectorAll('.track__list .track')[num].remove();
     },
 
     set bpm(value) {

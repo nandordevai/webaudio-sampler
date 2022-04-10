@@ -1,12 +1,6 @@
 import { clamp } from './lib.js';
 import { TrackView } from './TrackView.js';
 
-const fTypes = {
-    lp: 'lowpass',
-    hp: 'highpass',
-    bp: 'bandpass',
-};
-
 export const Track = (num) => ({
     num,
     octave: null,
@@ -17,11 +11,10 @@ export const Track = (num) => ({
     delay: 0.0,
     reverb: 0.0,
     gain: 1.0,
-    filter: null,
     buffer: null,
     filter: {
         freq: 20000,
-        type: 'lowpass',
+        type: 'lp',
     },
     view: {...TrackView},
 
@@ -36,7 +29,7 @@ export const Track = (num) => ({
 
     setFilter(freq = null, type = null) {
         if (freq !== null) this.filter.freq = clamp(freq, 20, 20000);
-        if (type !== null) this.filter.type = fTypes[type];
+        if (type !== null) this.filter.type = type;
         this.view.updateFilterUI(this.filter);
     },
 
@@ -50,7 +43,7 @@ export const Track = (num) => ({
         const fx = ['delay', 'reverb', 'gain', 'filter'];
         const cfx = fx.find(_ => _[0] === param.toLowerCase());
         if (cfx === 'filter') {
-            if (val.slice(-1).toLowerCase() === 'k') {
+            if (val.toString().slice(-1).toLowerCase() === 'k') {
                 val = parseFloat(val.slice(0, -1)) * 1000;
             }
             if (['lp', 'hp', 'bp'].includes(val)) {

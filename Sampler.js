@@ -47,15 +47,31 @@ export const Sampler = {
         return track;
     },
 
-    removeTrack(track) {
-        this.tracks.splice(track.num, 1);
-        this.view.removeTrack(track.num);
+    removeTrack(n) {
+        this.tracks.splice(n, 1);
+        this.view.removeTrack(n);
         for (let [i, _] of this.tracks.entries()) {
             _.num = i;
         }
+        this.save();
+    },
+
+    async save() {
+        localStorage.tracks = await JSON.stringify(this.tracks.map(_ => ({
+            sample: _.path,
+            f: [_.filter.freq, _.filter.type],
+            g: _.gain,
+            r: _.reverb,
+            d: _.delay,
+        })));
     },
 
     play(note, velocity) {
+        const fType = {
+            lp: 'lowpass',
+            hp: 'highpass',
+            bp: 'bandpass',
+        };
         // TODO: velocity curve
         const trackNum = note - 60;
         const t = this.tracks[trackNum];
@@ -67,7 +83,7 @@ export const Sampler = {
         trackOut.connect(this.mixer.master);
 
         const filter = this.ctx.createBiquadFilter();
-        filter.type = t.filter.type;
+        filter.type = fType[t.filter.type];
         filter.frequency.setValueAtTime(t.filter.freq, this.ctx.currentTime);
         bufSrc.connect(filter);
         filter.connect(trackOut);
@@ -91,18 +107,9 @@ export const Sampler = {
         });
     },
 
-    async loadSample(path) {
-        await fetch(path)
-            .then(res => res.arrayBuffer())
-            .then(aBuf => this.ctx.decodeAudioData(aBuf))
-            .then((buffer) => {
-                const name = path.split('/').slice(-1)[0].split('.')[0];
-                this.addTrack(path, name, buffer);
-            });
-    },
-
     setTrackParam(n, param, value) {
         this.tracks[n].setParam(param, value);
+        this.save();
     },
 
     allNoteOff() {
@@ -126,7 +133,41 @@ export const Sampler = {
         this.mixer.delayTime = 1 / value / 60 * 1000;
     },
 
-    onLoadError() {
+    onLoadError(error) {
         // TODO
-    }
+    },
+
+    async loadSample(path) {
+        await fetch(path)
+            .then(res => res.arrayBuffer())
+            .then(aBuf => this.ctx.decodeAudioData(aBuf))
+            .then((buffer) => {
+                const name = path.split('/').slice(-1)[0].split('.')[0];
+                this.addTrack(path, name, buffer);
+            });
+    },
+
+    async loadSaved() {
+        const tracks = JSON.parse(localStorage.tracks);
+        if (tracks.length === 0) return;
+        try {
+            for (const [i, _] of Object.entries(tracks)) {
+                await this.loadSample(_.sample);
+                for (const p in _) {
+                    if (p !== 'sample') {
+                        if (Array.isArray(_[p])) {
+                            for (const f of _[p]) {
+                                this.setTrackParam(i, p, f);
+                            }
+                        } else {
+                            // console.log(i, p, _[p])
+                            this.setTrackParam(i, p, _[p]);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            this.onLoadError(error);
+        }
+    },
 };

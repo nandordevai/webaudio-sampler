@@ -1,5 +1,6 @@
 // https://github.com/hundredrabbits/Orca/issues/257
 // https://www.html5rocks.com/en/tutorials/audio/scheduling/
+// https://github.com/starmandeluxe/WebMidiClockSequencer/blob/master/js/sequencer.js
 
 export const MIDIClock = {
     buffer: Array(100).fill(120),
