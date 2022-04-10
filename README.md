@@ -4,7 +4,7 @@ Basic sampler implemented with Electron & WebAudio API
 
 Drag and drop samples on window to load. There are no configurable parameters for the samples for now (ie. no pitch or length change etc.) Files are loaded with [`decodeAudioData()`](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData) so they will be resampled to the `AudioContext`'s sample rate (if different).
 
-The sampler saves the current sample list and track settings to local storage and it tries to load them again on next start. Currently there isn’t any error checking. Saving and loading kits will probably be implemented.
+The sampler saves the current sample list and track settings to local storage and it tries to load them again on next start. Currently there isn’t any error checking. You can save the current kit with Cmd/Ctrl-S and load it with Cmd/Ctrl-O.
 
 ## Commands
 
@@ -34,6 +34,6 @@ Parameters for delay and reverb are fixed, might be configurable later.
 
 ## MIDI
 
-Input device can be selected with Cmd-. on Mac, Ctrl-. on Windows. Clock syncs automatically, delay time also synced to clock.
+Input device can be selected with 'Cmd/Ctrl-.'. Clock syncs automatically, delay time also synced to clock.
 
 Effect parameters can be set with CC messages. CC starts with 64 for track 0 delay and increases by one for every effect on the track. Next track starts with 68 for delay etc.
