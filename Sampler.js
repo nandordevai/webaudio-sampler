@@ -20,7 +20,7 @@ export const Sampler = {
         let i = 0;
         let octave = 3;
         while (true) {
-            if (i > 0 && i % 12 === 0);
+            if (i > 0 && i % 12 === 0) octave++;
             const note = this.noteNames[i % 12];
             i++;
             yield [octave, note];
@@ -29,14 +29,15 @@ export const Sampler = {
 
     addTrack(path, name, buffer) {
         const [octave, note] = this.noteGenerator.next().value;
-        const track = Object.assign(Object.create(Track(this.tracks.length)), {
+        const track = {...Track, ...{
+            num: this.tracks.length,
             octave,
             note,
             path,
             name,
             midiCh: this.midiCh,
             buffer
-        });
+        }};
         track.view.render(this.view.el.querySelector('.track__list'), track);
         track.setFX('delay');
         track.setFX('reverb');
@@ -56,15 +57,12 @@ export const Sampler = {
     removeTrack(n) {
         this.tracks.splice(n, 1);
         this.view.removeTrack(n);
-        for (let [i, _] of this.tracks.entries()) {
-            _.num = i;
-        }
-        for (const _ of this.tracks) _.updateNumber();
+        this.tracks.forEach((_, i) => _.number = i);
         this.save();
     },
 
-    async save() {
-        localStorage.tracks = await JSON.stringify(this.tracks.map(_ => ({
+    save() {
+        localStorage.tracks = JSON.stringify(this.tracks.map(_ => ({
             sample: _.path,
             f: [_.filter.freq, _.filter.type],
             g: _.gain,
@@ -121,9 +119,7 @@ export const Sampler = {
 
     allNoteOff() {
         // TODO: cut off delay
-        for (const _ of this.playingBufs) {
-            _.stop();
-        }
+        this.playingBufs.forEach(_ => _.stop());
     },
 
     handleCC(cc, val) {
@@ -159,18 +155,11 @@ export const Sampler = {
         const tracks = JSON.parse(localStorage.tracks);
         if (tracks.length === 0) return;
         try {
-            for (const [i, _] of Object.entries(tracks)) {
-                await this.loadSample(_.sample);
-                for (const p in _) {
-                    if (p !== 'sample') {
-                        if (Array.isArray(_[p])) {
-                            for (const f of _[p]) {
-                                this.setTrackParam(i, p, f);
-                            }
-                        } else {
-                            this.setTrackParam(i, p, _[p]);
-                        }
-                    }
+            for (const [i, track] of Object.entries(tracks)) {
+                await this.loadSample(track.sample);
+                for (const param in track) {
+                    if (param === 'sample') continue;
+                    [].concat(track[param]).forEach(value => this.setTrackParam(i, param, value));
                 }
             }
         } catch (error) {

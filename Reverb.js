@@ -1,3 +1,5 @@
+// https://itnext.io/convolution-reverb-and-web-audio-api-8ee65108f4ae
+
 export function Reverb(ctx) {
     const length = ctx.sampleRate * 1;
     const decay = 1;

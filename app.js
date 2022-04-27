@@ -9,13 +9,13 @@ import { MIDIClock } from './MIDIClock.js';
 import { MIDIMessage } from './MIDIMessage.js';
 
 const ctx = new window.AudioContext();
-const mixer = Object.assign(Object.create(Mixer), { ctx });
+const mixer = Object.assign(Mixer, { ctx });
 mixer.init();
-const sampler = Object.assign(Object.create(Sampler), { ctx, mixer });
+const sampler = Object.assign(Sampler, { ctx, mixer });
 sampler.init();
-const clock = Object.assign(Object.create(MIDIClock), { ctx });
+const clock = Object.assign(MIDIClock, { ctx });
 let inputs = null;
-let selectedInput = null;
+let selectedInput = 0;
 
 function onMidiMessage(event) {
     const msg = MIDIMessage(event);
@@ -36,8 +36,9 @@ function onMidiMessage(event) {
 function processKeyboardInput(event) {
     if ((navigator.platform.startsWith('Mac') && event.metaKey)
         || (navigator.platform.startsWith('Win') && event.ctrlKey)) {
-        if (event.code === 'Period') selectNextInput();
-        else if (event.code === 'KeyS') {
+        if (event.code === 'Period') {
+            selectNextInput();
+        } else if (event.code === 'KeyS') {
             WebaudioSampler.saveKit(localStorage.tracks);
         } else if (event.code === 'KeyO') {
             WebaudioSampler.loadKit();
@@ -89,17 +90,15 @@ function onDragOver(event) {
 
 function onFileDrop(event) {
     event.preventDefault();
-    for (const _ of event.dataTransfer.items) {
-        const file = _.getAsFile();
-        sampler.loadSample(file.path);
-    }
+    event.dataTransfer.items.forEach(_ => {
+        sampler.loadSample(_.getAsFile().path);
+    });
 }
 
 navigator.requestMIDIAccess()
     .then((access) => {
         inputs = Array.from(access.inputs.values());
-        setMIDIInput(0);
-        selectedInput = 0;
+        setMIDIInput(selectedInput);
     });
 
 setInterval(() => {

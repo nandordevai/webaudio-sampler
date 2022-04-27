@@ -1,8 +1,8 @@
 import { clamp } from './lib.js';
 import { TrackView } from './TrackView.js';
 
-export const Track = (num) => ({
-    num,
+export const Track = {
+    num: null,
     octave: null,
     note: null,
     name: null,
@@ -60,7 +60,8 @@ export const Track = (num) => ({
         this.view.bang(value);
     },
 
-    updateNumber() {
-        this.view.setNumber(this.num);
+    set number(n) {
+        this.num = n;
+        this.view.setNumber(n);
     },
-});
+};
